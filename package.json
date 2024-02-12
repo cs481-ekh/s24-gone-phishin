@@ -1,0 +1,18 @@
+{
+  "name": "s24-gone-phishin",
+  "version": "1.0.0",
+  "description": "BSU CS481 Capstone project template",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
