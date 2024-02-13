@@ -1,0 +1,20 @@
+name: Build
+
+on: 
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        timeout-minutes: 5
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Run build.sh
+              run: ./build.sh
+
