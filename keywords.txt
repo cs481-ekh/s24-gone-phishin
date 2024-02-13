@@ -1,0 +1,8 @@
+invoice,new,message,file,request,action,verification,efax,voicemail,label,post,document,postal,calculations,copy,fedex,statement,financial,dhl,usps,notification,n,irs,no,delivery,ticket,free,now,click,urgent,winner,winning,congradulations,password,passwords,username,usernames,SSN,inv,required,8,shipment,ups,express,alert,confirmation,report,idnotification,tax,taxes
+
+
+Sources:
+https://hubwisetech.com/the-most-commonly-used-email-keywords-to-look-for-to-avoid-phishing-scams/
+https://www.route-fifty.com/cybersecurity/2012/09/the-20-most-common-words-in-phishing-attacks/280956/
+https://www.activecampaign.com/blog/spam-words
+https://www.mandiant.com/sites/default/files/2021-09/rpt-top-spear-phishing-words-1.pdf
