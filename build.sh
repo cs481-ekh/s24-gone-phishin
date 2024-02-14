@@ -7,8 +7,6 @@ VERSION="0.1"
 echo "Creating zip file..."
 zip -r HookLineSecureV:$VERSION.zip ./* --exclude .github/*
 
-# Build Docker image
-echo "Building Docker image..."
-docker build -t HookLineSecureImageV:$VERSION .
+# additional signing required to be added later...
 
 echo "Build completed successfully!"
