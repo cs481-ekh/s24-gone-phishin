@@ -1,4 +1,4 @@
-const process = require("../js/process-content");
+const process = require("../../js/process-content");
 
 //Test if can recognize HTML
 test('Test if HTML is recognized', () => {
