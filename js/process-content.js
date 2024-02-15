@@ -30,3 +30,5 @@ function normalizeText(text) {
     // Normalize text by removing extra whitespace
     return text.trim().replace(/\s+/g, ' ');
 }
+
+module.exports = {processContent, isHTML, extractTextFromHTML, normalizeText};
