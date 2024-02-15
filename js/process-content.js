@@ -1,3 +1,8 @@
+const jsdom = require("jsdom")
+const { window } = new jsdom.JSDOM();
+global.window = window;
+global.document = window.document;
+
 function processContent(content) {
     let text = '';
 
@@ -22,7 +27,7 @@ function isHTML(content) {
 
 function extractTextFromHTML(htmlContent) {
     // Use DOMParser to parse HTML and extract text content
-    const doc = new DOMParser().parseFromString(htmlContent, 'text/html');
+    const doc = new window.DOMParser().parseFromString(htmlContent, 'text/html');
     return doc.body.textContent || "";
 }
 
