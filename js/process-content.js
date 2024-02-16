@@ -1,3 +1,8 @@
+/**
+ * Script for distinguishing and parsing HTML and plaintext
+ * 
+ * @credits OpenAI ChatGPT
+ */
 const jsdom = require("jsdom")
 const { window } = new jsdom.JSDOM();
 global.window = window;

@@ -1,3 +1,8 @@
+/**
+ * Test script for process-content.js
+ * 
+ * @author Tori Simon
+ */
 const process = require("../../js/process-content");
 
 //Test if can recognize HTML
@@ -23,4 +28,14 @@ test('Test if HTML is extracted correctly', () => {
 //Check if normalize normalizes correctly
 test('Test if trailing whitespace is removed', () => {
     expect(process.normalizeText("        Hello world!      ")).toEqual("Hello world!");
+});
+
+//test process content with HTML
+test('Test if process content works with HTML', () => {
+    expect(process.processContent("<div>Hello <b>world</b>!</div>")).toEqual("Hello world!");
+});
+
+//test process content with plaintext
+test('Test if process content works with plaintext', () => {
+    expect(process.processContent("Hello world!")).toEqual("Hello world!");
 });
