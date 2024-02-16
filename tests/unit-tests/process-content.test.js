@@ -7,7 +7,7 @@ const process = require("../../js/process-content");
 
 //Test if can recognize HTML
 test('Test if HTML is recognized', () => {
-    expect(process.isHTML("<div>Hello <b>world</b>!</div>")).toBe(true);
+    expect(process.isHTML("<div>Hello <b>world</b>!</div>")).toBe(true); 
 });
 
 //Test if can recongnize plaintext
