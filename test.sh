@@ -1,6 +1,5 @@
 #!/bin/bash
 
-VERSION="0.1"
 
 # check if openssl has been installed. Tests for key verification to be added...
 openssl version

@@ -18,5 +18,5 @@ jobs:
             run: podman build -t hooklinesecureimage:0.1 .
 
           - name: Run build.sh
-            run: podman run hooklinesecureimage:01 bash -c "./build.sh"
+            run: podman run hooklinesecureimage:0.1 bash -c "./build.sh"
 
