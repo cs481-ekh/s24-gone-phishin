@@ -1,10 +1,11 @@
 {
-  "name": "s24-gone-phishin",
+  "name": "name",
   "version": "1.0.0",
   "description": "BSU CS481 Capstone project template",
   "main": "index.js",
   "directories": {
-    "doc": "docs"
+    "doc": "docs",
+    "test": "tests"
   },
   "scripts": {
     "test": "jest"
@@ -16,6 +17,7 @@
     "jest": "^29.7.0"
   },
   "dependencies": {
+    "jsdom": "^24.0.0",
     "puppeteer": "^22.0.0"
   }
 }
