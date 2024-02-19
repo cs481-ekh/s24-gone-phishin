@@ -20,7 +20,7 @@
         "matches": [
           "*://mail.google.com/*"
         ],
-        "js": ["imgdisp.js"]
+        "js": ["uiDisp.js"]
       }
     ]
 } 
