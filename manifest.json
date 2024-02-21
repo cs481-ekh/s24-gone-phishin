@@ -5,8 +5,7 @@
     "version": "1.0",
 
     "permissions": [
-        "sidePanel",
-        "https://api.languagetool.org/v2/check"
+        "sidePanel"
       ],
 
     "action": {
