@@ -12,5 +12,14 @@
       "default_popup": "popup/popup.html",
       "default_path": "sidebar/sidebar.html",
       "default_icon": "images/icon.png"
-    }
+    },
+
+    "content_scripts": [
+      {
+        "matches": [
+          "*://mail.google.com/*"
+        ],
+        "js": ["uiDisp.js"]
+      }
+    ]
 } 

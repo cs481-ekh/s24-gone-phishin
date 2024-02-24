@@ -7,13 +7,20 @@ on:
 
 jobs:
     test:
-        runs-on: ubuntu-latest
+      runs-on: ubuntu-latest
 
-        timeout-minutes: 5
+      timeout-minutes: 5
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-            - name: Run test.sh
-              run: ./test.sh
+        - name: Build podman image
+          run: podman build -t hooklinesecureimage:0.1 .
+
+        - name: Run test.sh
+          run: podman run hooklinesecureimage:0.1 bash -c "./test.sh"
+      
+
+        
+          

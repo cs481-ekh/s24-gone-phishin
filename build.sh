@@ -1,14 +1,17 @@
 #!/bin/bash
 
-VERSION="0.1"
+VERSION="0.11"
 
-# I have read online about chrome extensions being packaged with a .crx file and a key .pem fle, but for now so we can
-# have a working build.sh file I will just have be packaged in a .zip file without signing it.
-echo "Creating zip file..."
-zip -r HookLineSecureV:$VERSION.zip ./* --exclude .github/*
+SOURCE_DIR="${GITHUB_WORKSPACE}"
+OUTPUT_DIR="${GITHUB_WORKSPACE}/build"
 
-# Build Docker image
-echo "Building Docker image..."
-docker build -t HookLineSecureImageV:$VERSION .
+# Ensure the output directory exists
+mkdir -p "${OUTPUT_DIR}"
+
+# Change directory to the source directory
+cd "${SOURCE_DIR}" || exit
+zip -r "${OUTPUT_DIR}/hooklinesecurev:$VERSION.zip" ./* --exclude .github/*
+
+# additional signing required to be added later...
 
 echo "Build completed successfully!"
