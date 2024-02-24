@@ -41,6 +41,18 @@ sidebarDiv.style.zIndex = '999999';
 // Append the sidebarDiv to the document body
 document.body.appendChild(sidebarDiv);
 
+//TEST CODE
+const testbutton = document.createElement('button');
+testbutton.textContent = 'Test button'; // Set the text for the tab button
+testbutton.style.position = 'fixed';
+testbutton.style.right = '0';
+testbutton.style.top = '50%';
+testbutton.style.transform = 'translateY(-50%)';
+testbutton.style.zIndex = '9999999';
+
+sidebarDiv.appendChild(testbutton);
+//TEST CODE
+
 // Create a div element for the text
 const textDiv = document.createElement('div');
 textDiv.textContent = 'Hook, Line, and Secure';
@@ -71,3 +83,24 @@ tab.addEventListener('click', () => {
     // Move the tab button
     tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
 });
+
+testbutton.addEventListener("DOMContentLoaded", function() {
+    const getDataButton = document.getElementById("getDataButton");
+  
+    getDataButton.addEventListener("click", function() {
+      chrome.runtime.sendMessage({ action: "getData" }, function(response) {
+        if (response.success) {
+          console.log("Data from API:", response.data);
+          // Do something with the data, e.g., display it in the popup
+          // Note: This is just a basic example. You might want to update the UI more gracefully.
+          const matchesArray = response.data.matches;
+          const matchesCount = matchesArray ? matchesArray.length : 0;
+          document.body.innerHTML = `<pre>${JSON.stringify(matchesCount - 1, null, 2)}</pre>`;
+        } else {
+          console.error("Failed to get data:", response.error);
+          // Handle error, e.g., display error message in the popup
+          document.body.innerHTML = `<p>Error: ${response.error}</p>`;
+        }
+      });
+    });
+  });
