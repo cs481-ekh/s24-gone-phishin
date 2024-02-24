@@ -8,7 +8,7 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 
 const EXTENSION_PATH = path.resolve(__dirname, '..', '..');
-const EXTENSION_ID = 'bepbhcdlapfchobedkdknekjkanefamc';
+const EXTENSION_ID = 'mhhimjdpklijadkjgfkikfpdpgcmmlkp';
 
 let browser;
 
