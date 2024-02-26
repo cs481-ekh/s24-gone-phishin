@@ -19,7 +19,9 @@
         "matches": [
           "*://mail.google.com/*"
         ],
-        "js": ["uiDisp.js"]
+        "js": [
+          "uiDisp.js"
+        ]
       }
     ]
 } 
