@@ -50,8 +50,12 @@ document.body.appendChild(tab);
 // Function to tokenize email contents
 function tokenizeEmailContents(emailBody) {
   // Split email contents into tokens
-  const tokens = emailBody.split(/\s+/);
-  return tokens;
+  const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
+
+  // Remove unneccessary tokens
+  const filteredTokens = tokens.filter(token => token !== '' && token !== '‌');
+
+  return filteredTokens;
 }
 
 // Add event listener to the tab
@@ -80,8 +84,11 @@ tab.addEventListener('click', () => {
     if (emailBody && emailBody.textContent) {
       // Tokenize the email contents
       const tokens = tokenizeEmailContents(emailBody.textContent);
-      // Display the toekns in the sidebar
-      emailBodyDiv.textContent = tokens.join(' || ');
+
+      if (tokens.length > 0) {
+        // Display the tokens in the sidebar
+        emailBodyDiv.textContent = tokens.join(' || ');
+      }
     }
   });
   
