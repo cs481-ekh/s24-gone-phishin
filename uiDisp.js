@@ -1,4 +1,4 @@
-// //Function to display interface, credit to ChatGPT
+// Function to display interface, credit to ChatGPT
 
 // var img = document.createElement('img');
     
@@ -33,7 +33,7 @@ sidebarDiv.style.position = 'fixed';
 sidebarDiv.style.top = '10%';
 sidebarDiv.style.right = '-300px';
 sidebarDiv.style.width = '15%';
-sidebarDiv.style.height = '65%';
+sidebarDiv.style.height = '70%';
 sidebarDiv.style.backgroundColor = 'white';
 sidebarDiv.style.border = '1px solid black';
 sidebarDiv.style.zIndex = '999999';
@@ -53,15 +53,38 @@ testbutton.style.zIndex = '9999999';
 sidebarDiv.appendChild(testbutton);
 //TEST CODE
 
-// Create a div element for the text
+//TEST CODE
+const testbutton = document.createElement('button');
+testbutton.textContent = 'Test button'; // Set the text for the tab button
+testbutton.style.position = 'fixed';
+testbutton.style.right = '0';
+testbutton.style.top = '50%';
+testbutton.style.transform = 'translateY(-50%)';
+testbutton.style.zIndex = '9999999';
+
+sidebarDiv.appendChild(testbutton);
+//TEST CODE
+
+// Create a div element for the title text
 const textDiv = document.createElement('div');
 textDiv.textContent = 'Hook, Line, and Secure';
 textDiv.style.padding = '10px';
 textDiv.style.backgroundColor = 'blue';
 textDiv.style.color = 'white';
 
+// Create a div element for the email body contents
+const emailBodyDiv = document.createElement('div');
+emailBodyDiv.id = 'emailBodyDiv'; // Set an id for the div
+emailBodyDiv.style.overflowY = 'scroll'; // Add scroll behavior if needed
+emailBodyDiv.style.height = '94%'; // Set height to fill the sidebar
+emailBodyDiv.style.padding = '10px'; // Add padding for spacing
+emailBodyDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
+
 // Append the textDiv to the sidebarDiv
 sidebarDiv.appendChild(textDiv);
+
+// Append the emailBodyDiv to the sidebarDiv
+sidebarDiv.appendChild(emailBodyDiv);
 
 // Append the tab to the document body
 document.body.appendChild(tab);
@@ -82,25 +105,22 @@ tab.addEventListener('click', () => {
 
     // Move the tab button
     tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
-});
 
-testbutton.addEventListener("DOMContentLoaded", function() {
-    const getDataButton = document.getElementById("getDataButton");
+    // Create a MutationObserver to watch for changes to the email body
+    const observer = new MutationObserver(() => {
+    // Select the email body element
+    const emailBody = document.querySelector('.a3s.aiL');
   
-    getDataButton.addEventListener("click", function() {
-      chrome.runtime.sendMessage({ action: "getData" }, function(response) {
-        if (response.success) {
-          console.log("Data from API:", response.data);
-          // Do something with the data, e.g., display it in the popup
-          // Note: This is just a basic example. You might want to update the UI more gracefully.
-          const matchesArray = response.data.matches;
-          const matchesCount = matchesArray ? matchesArray.length : 0;
-          document.body.innerHTML = `<pre>${JSON.stringify(matchesCount - 1, null, 2)}</pre>`;
-        } else {
-          console.error("Failed to get data:", response.error);
-          // Handle error, e.g., display error message in the popup
-          document.body.innerHTML = `<p>Error: ${response.error}</p>`;
-        }
-      });
-    });
+    // Check if the email body is present and contains text
+    if (emailBody && emailBody.textContent) {
+      // Display the email body contents in the new div
+      emailBodyDiv.textContent = emailBody.textContent;
+    }
   });
+  
+  // Configure the observer to watch for changes to the email body subtree
+  observer.observe(document.body, {
+    subtree: true,
+    childList: true,
+  });
+});
