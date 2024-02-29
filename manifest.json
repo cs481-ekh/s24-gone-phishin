@@ -1,27 +1,32 @@
 {
-    "manifest_version": 3,
-    "name": "Hook Line and Secure",
-    "description": "Hook Line and Secure' is a browser extension that scans emails for signs of phishing and calculates a confidence score.",
-    "version": "1.0",
+  "manifest_version": 3,
+  "name": "Hook Line and Secure",
+  "description": "Hook Line and Secure' is a browser extension that scans emails for signs of phishing and calculates a confidence score.",
+  "version": "1.0",
 
-    "permissions": [
-        "sidePanel"
-      ],
-
-    "action": {
-      "default_popup": "popup/popup.html",
-      "default_path": "sidebar/sidebar.html",
-      "default_icon": "images/icon.png"
-    },
-
-    "content_scripts": [
+  "permissions": [
+      "sidePanel",
       {
-        "matches": [
-          "*://mail.google.com/*"
-        ],
-        "js": [
-          "uiDisp.js"
-        ]
+          "fileSystem": [
+      "/database/HLS.db"
+          ]
       }
-    ]
+    ],
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_path": "sidebar/sidebar.html",
+    "default_icon": "images/icon.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "*://mail.google.com/*"
+      ],
+      "js": [
+        "uiDisp.js"
+      ]
+    }
+  ]
 } 
