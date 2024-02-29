@@ -1,22 +1,4 @@
-// //Function to display interface, credit to ChatGPT
-
-// var img = document.createElement('img');
-    
-// // Set the image source
-// img.src = './images/logo.png'; // Provide the path to your image
-
-// img.style.top = 0;
-// img.style.left = 0;
-// img.style.width = '100%';
-// img.style.height = '100%';
-// img.style.zIndex = 9999999; /* Ensures it's above other content */
-// // img.style.pointerEvents = none; /* Allows interaction with elements behind the overlay */
-
-// // Set alt-text
-// img.alt = 'Hook, Line, and Secure Logo';
-
-// // Append the image to the body
-// document.body.appendChild(img);
+// Displays interface, credit to ChatGPT
 
 // Create the tab
 const tab = document.createElement('button');
@@ -33,7 +15,7 @@ sidebarDiv.style.position = 'fixed';
 sidebarDiv.style.top = '10%';
 sidebarDiv.style.right = '-300px';
 sidebarDiv.style.width = '15%';
-sidebarDiv.style.height = '65%';
+sidebarDiv.style.height = '70%';
 sidebarDiv.style.backgroundColor = 'white';
 sidebarDiv.style.border = '1px solid black';
 sidebarDiv.style.zIndex = '999999';
@@ -41,18 +23,49 @@ sidebarDiv.style.zIndex = '999999';
 // Append the sidebarDiv to the document body
 document.body.appendChild(sidebarDiv);
 
-// Create a div element for the text
+// Create a div element for the title text
 const textDiv = document.createElement('div');
 textDiv.textContent = 'Hook, Line, and Secure';
 textDiv.style.padding = '10px';
 textDiv.style.backgroundColor = 'blue';
 textDiv.style.color = 'white';
 
+// Create a div element for the email body contents
+const emailBodyDiv = document.createElement('div');
+emailBodyDiv.id = 'emailBodyDiv'; // Set an id for the div
+emailBodyDiv.style.overflowY = 'scroll'; // Add scroll behavior if needed
+emailBodyDiv.style.height = '94%'; // Set height to fill the sidebar
+emailBodyDiv.style.padding = '10px'; // Add padding for spacing
+emailBodyDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
+
+//TEST CODE
+const smBodyDiv = document.createElement('div');
+smBodyDiv.id = 'smBodyDiv';
+smBodyDiv.style.padding = '10px';
+smBodyDiv.textContent = "0";
+
 // Append the textDiv to the sidebarDiv
 sidebarDiv.appendChild(textDiv);
 
+// Append the emailBodyDiv to the sidebarDiv
+sidebarDiv.appendChild(emailBodyDiv);
+
+//TEST CODE
+sidebarDiv.appendChild(smBodyDiv);
+
 // Append the tab to the document body
 document.body.appendChild(tab);
+
+// Function to tokenize email contents
+function tokenizeEmailContents(emailBody) {
+  // Split email contents into tokens
+  const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
+
+  // Remove unneccessary tokens
+  const filteredTokens = tokens.filter(token => token !== '' && token !== '‌');
+
+  return filteredTokens;
+}
 
 // Add event listener to the tab
 tab.addEventListener('click', () => {
@@ -70,4 +83,59 @@ tab.addEventListener('click', () => {
 
     // Move the tab button
     tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
+
+    // Create a MutationObserver to watch for changes to the email body
+    const observer = new MutationObserver(() => {
+    // Select the email body element
+    const emailBody = document.querySelector('.a3s.aiL');
+  
+    // Check if the email body is present and contains text
+    if (emailBody && emailBody.textContent) {
+      // Tokenize the email contents
+      const tokens = tokenizeEmailContents(emailBody.textContent);
+
+      if (tokens.length > 0) {
+        // Display the tokens in the sidebar
+        emailBodyDiv.textContent = tokens.join(' || ');
+      }
+    }
+  });
+  
+  // Configure the observer to watch for changes to the email body subtree
+  observer.observe(document.body, {
+    subtree: true,
+    childList: true,
+  });
+  
+  //Call LangaugeTool API to check for spelling errors
+  const params = new URLSearchParams();
+  params.append("text", document.querySelector('.a3s.aiL').textContent);
+  console.log(params.toString()); //FIXME debug
+  fetch("https://api.languagetoolplus.com/v2/check", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Accept": "application/json"
+          },
+          body: params.toString() + "&language=en-US&enabledOnly=false"
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("API Response:", data);
+        const matchesArray = data.matches; // Extracting the matches array
+        console.log("Matches:", matchesArray);
+        const matchesCount = matchesArray ? matchesArray.length : 0;
+        smBodyDiv.textContent = JSON.stringify(matchesCount, null, 2);
+      })
 });
+
+
+
+
+
+
