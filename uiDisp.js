@@ -60,7 +60,7 @@ emailBodyDiv.style.boxSizing = 'border-box'; // Include padding in width calcula
 const smBodyDiv = document.createElement('div');
 smBodyDiv.id = 'smBodyDiv';
 smBodyDiv.style.padding = '10px';
-smBodyDiv.textContent = '0';
+smBodyDiv.textContent = "0";
 
 // Append the textDiv to the sidebarDiv
 sidebarDiv.appendChild(textDiv);
@@ -108,35 +108,62 @@ tab.addEventListener('click', () => {
     subtree: true,
     childList: true,
   });
+  
+  //Call LangaugeTool API to check for spelling errors
+  const params = new URLSearchParams();
+  params.append("text", document.querySelector('.a3s.aiL').textContent);
+  console.log(params.toString()); //FIXME debug
+  fetch("https://api.languagetoolplus.com/v2/check", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Accept": "application/json"
+          },
+          body: params.toString() + "&language=en-US&enabledOnly=false"
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("API Response:", data);
+        const matchesArray = data.matches; // Extracting the matches array
+        console.log("Matches:", matchesArray);
+        const matchesCount = matchesArray ? matchesArray.length : 0;
+        smBodyDiv.textContent = JSON.stringify(matchesCount, null, 2);
+      })
 });
 
-// Create the test button
-const testButton = document.createElement('button');
-testButton.textContent = 'Check Spelling';
-testButton.style.margin = '10px'; // Add some margin for spacing
+// //Call LangaugeTool API to check for spelling errors
+// const params = new URLSearchParams();
+// params.append("text", document.querySelector('.a3s.aiL').textContent);
+// console.log(params.toString()); //FIXME debug
+// fetch("https://api.languagetoolplus.com/v2/check", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/x-www-form-urlencoded",
+//             "Accept": "application/json"
+//         },
+//         body: params.toString() + "&language=en-US&enabledOnly=false"
+//     })
+//     .then(response => {
+//       if (!response.ok) {
+//         throw new Error('Network response was not ok');
+//       }
+//       return response.json();
+//     })
+//     .then(data => {
+//       console.log("API Response:", data);
+//       const matchesArray = data.matches; // Extracting the matches array
+//       console.log("Matches:", matchesArray);
+//       const matchesCount = matchesArray ? matchesArray.length : 0;
+//       smBodyDiv.textContent = JSON.stringify(matchesCount, null, 2);
+//     })
 
-// Append the test button to the sidebar
-sidebarDiv.appendChild(testButton);
 
-document.addEventListener("DOMContentLoaded", function() {
-    
-      testButton.addEventListener("click", function() {
-        chrome.runtime.sendMessage({ action: "getData" }, function(response) {
-          if (response.success) {
-            console.log("Data from API:", response.data);
-            // Do something with the data, e.g., display it in the popup
-            // Note: This is just a basic example. You might want to update the UI more gracefully.
-            const matchesArray = response.data.matches;
-            const matchesCount = matchesArray ? matchesArray.length : 0;
-            smBodyDiv.textContent = `<pre>${JSON.stringify(matchesCount - 1, null, 2)}</pre>`;
-          } else {
-            console.error("Failed to get data:", response.error);
-            // Handle error, e.g., display error message in the popup
-            document.body.innerHTML = `<p>Error: ${response.error}</p>`;
-          }
-        });
-      });
-    });
+
 
 
 
