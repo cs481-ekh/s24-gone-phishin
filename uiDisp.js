@@ -1,22 +1,4 @@
-// Function to display interface, credit to ChatGPT
-
-// var img = document.createElement('img');
-    
-// // Set the image source
-// img.src = './images/logo.png'; // Provide the path to your image
-
-// img.style.top = 0;
-// img.style.left = 0;
-// img.style.width = '100%';
-// img.style.height = '100%';
-// img.style.zIndex = 9999999; /* Ensures it's above other content */
-// // img.style.pointerEvents = none; /* Allows interaction with elements behind the overlay */
-
-// // Set alt-text
-// img.alt = 'Hook, Line, and Secure Logo';
-
-// // Append the image to the body
-// document.body.appendChild(img);
+// Displays interface, credit to ChatGPT
 
 // Create the tab
 const tab = document.createElement('button');
@@ -74,6 +56,17 @@ sidebarDiv.appendChild(smBodyDiv);
 // Append the tab to the document body
 document.body.appendChild(tab);
 
+// Function to tokenize email contents
+function tokenizeEmailContents(emailBody) {
+  // Split email contents into tokens
+  const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
+
+  // Remove unneccessary tokens
+  const filteredTokens = tokens.filter(token => token !== '' && token !== '‌');
+
+  return filteredTokens;
+}
+
 // Add event listener to the tab
 tab.addEventListener('click', () => {
     // Toggle the visibility of the sidebar
@@ -98,8 +91,13 @@ tab.addEventListener('click', () => {
   
     // Check if the email body is present and contains text
     if (emailBody && emailBody.textContent) {
-      // Display the email body contents in the new div
-      emailBodyDiv.textContent = emailBody.textContent;
+      // Tokenize the email contents
+      const tokens = tokenizeEmailContents(emailBody.textContent);
+
+      if (tokens.length > 0) {
+        // Display the tokens in the sidebar
+        emailBodyDiv.textContent = tokens.join(' || ');
+      }
     }
   });
   
