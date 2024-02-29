@@ -38,11 +38,20 @@ emailBodyDiv.style.height = '94%'; // Set height to fill the sidebar
 emailBodyDiv.style.padding = '10px'; // Add padding for spacing
 emailBodyDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
 
+//TEST CODE
+const smBodyDiv = document.createElement('div');
+smBodyDiv.id = 'smBodyDiv';
+smBodyDiv.style.padding = '10px';
+smBodyDiv.textContent = "0";
+
 // Append the textDiv to the sidebarDiv
 sidebarDiv.appendChild(textDiv);
 
 // Append the emailBodyDiv to the sidebarDiv
 sidebarDiv.appendChild(emailBodyDiv);
+
+//TEST CODE
+sidebarDiv.appendChild(smBodyDiv);
 
 // Append the tab to the document body
 document.body.appendChild(tab);
