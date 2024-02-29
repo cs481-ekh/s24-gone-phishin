@@ -42,7 +42,13 @@ emailBodyDiv.style.boxSizing = 'border-box'; // Include padding in width calcula
 const smBodyDiv = document.createElement('div');
 smBodyDiv.id = 'smBodyDiv';
 smBodyDiv.style.padding = '10px';
-smBodyDiv.textContent = "0";
+smBodyDiv.textContent = "Spelling Errors: 0";
+
+//TEST CODE
+const gmBodyDiv = document.createElement('div');
+gmBodyDiv.id = 'gmBodyDiv';
+gmBodyDiv.style.padding = '10px';
+gmBodyDiv.textContent = "Grammar Errors: 0";
 
 // Append the textDiv to the sidebarDiv
 sidebarDiv.appendChild(textDiv);
@@ -52,6 +58,7 @@ sidebarDiv.appendChild(emailBodyDiv);
 
 //TEST CODE
 sidebarDiv.appendChild(smBodyDiv);
+sidebarDiv.appendChild(gmBodyDiv);
 
 // Append the tab to the document body
 document.body.appendChild(tab);
@@ -132,7 +139,7 @@ tab.addEventListener('click', () => {
           let spellingErrors = [];
           let grammarErrors = [];
           matchesArray.forEach(error => {
-            if(error.type = "misspelling") {
+            if(error.shortMessage == "Spelling mistake") {
               spellingErrors.push(error)
             }
             else {
@@ -141,6 +148,9 @@ tab.addEventListener('click', () => {
           })
           const spellingCount = spellingErrors ? spellingErrors.length : 0;
           const grammarCount = grammarErrors ? grammarErrors.length : 0;
-          smBodyDiv.textContent = JSON.stringify(spellingCount, null, 2);
+          const spellingString = "Spelling Errors: " + spellingCount;
+          const grammarString = "Grammar Errors: " + grammarCount;
+          smBodyDiv.textContent = spellingString;
+          gmBodyDiv.textContent = grammarString;
         })
 });
