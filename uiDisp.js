@@ -42,7 +42,13 @@ emailBodyDiv.style.boxSizing = 'border-box'; // Include padding in width calcula
 const smBodyDiv = document.createElement('div');
 smBodyDiv.id = 'smBodyDiv';
 smBodyDiv.style.padding = '10px';
-smBodyDiv.textContent = "0";
+smBodyDiv.textContent = "Spelling Errors: 0";
+
+//TEST CODE
+const gmBodyDiv = document.createElement('div');
+gmBodyDiv.id = 'gmBodyDiv';
+gmBodyDiv.style.padding = '10px';
+gmBodyDiv.textContent = "Grammar Errors: 0";
 
 // Append the textDiv to the sidebarDiv
 sidebarDiv.appendChild(textDiv);
@@ -52,6 +58,7 @@ sidebarDiv.appendChild(emailBodyDiv);
 
 //TEST CODE
 sidebarDiv.appendChild(smBodyDiv);
+sidebarDiv.appendChild(gmBodyDiv);
 
 // Append the tab to the document body
 document.body.appendChild(tab);
@@ -106,36 +113,44 @@ tab.addEventListener('click', () => {
     subtree: true,
     childList: true,
   });
-  
-  //Call LangaugeTool API to check for spelling errors
-  const params = new URLSearchParams();
-  params.append("text", document.querySelector('.a3s.aiL').textContent);
-  console.log(params.toString()); //FIXME debug
-  fetch("https://api.languagetoolplus.com/v2/check", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              "Accept": "application/json"
-          },
-          body: params.toString() + "&language=en-US&enabledOnly=false"
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log("API Response:", data);
-        const matchesArray = data.matches; // Extracting the matches array
-        console.log("Matches:", matchesArray);
-        const matchesCount = matchesArray ? matchesArray.length : 0;
-        smBodyDiv.textContent = JSON.stringify(matchesCount, null, 2);
-      })
+
+    //Call LangaugeTool API to check for spelling errors
+    const params = new URLSearchParams();
+    params.append("text", document.querySelector('.a3s.aiL').textContent);
+    console.log(params.toString()); //FIXME debug
+    fetch("https://api.languagetoolplus.com/v2/check", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json"
+            },
+            body: params.toString() + "&language=en-US&enabledOnly=false"
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log("API Response:", data);
+          const matchesArray = data.matches; // Extracting the matches array
+          console.log("Matches:", matchesArray);
+          let spellingErrors = [];
+          let grammarErrors = [];
+          matchesArray.forEach(error => {
+            if(error.shortMessage == "Spelling mistake") {
+              spellingErrors.push(error)
+            }
+            else {
+              grammarErrors.push(error)
+            }
+          })
+          const spellingCount = spellingErrors ? spellingErrors.length : 0;
+          const grammarCount = grammarErrors ? grammarErrors.length : 0;
+          const spellingString = "Spelling Errors: " + spellingCount;
+          const grammarString = "Grammar Errors: " + grammarCount;
+          smBodyDiv.textContent = spellingString;
+          gmBodyDiv.textContent = grammarString;
+        })
 });
-
-
-
-
-
-
