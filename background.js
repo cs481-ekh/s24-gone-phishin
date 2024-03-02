@@ -7,7 +7,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
       console.log('Toggle state changed to:', enabled);
   
       // Send message to other components
-      chrome.tabs.query({}, function(tabs) {
+      chrome.tabs.query({active: true}, function(tabs) {
         tabs.forEach(function(tab) {
           chrome.tabs.sendMessage(tab.id, { enabled: enabled });
         });

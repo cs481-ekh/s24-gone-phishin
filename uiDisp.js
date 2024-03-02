@@ -1,4 +1,14 @@
 // Displays interface, credit to ChatGPT
+
+//Set starting state
+chrome.storage.sync.get('enabled', function (result) {
+  if (result.enabled) {
+    injectSidebarElements();
+  } else {
+    //Do nothing, page doesn't need edited
+  }
+});
+
 // Listen for messages from the background script
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.enabled !== undefined) {
