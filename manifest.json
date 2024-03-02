@@ -6,7 +6,8 @@
 
     "permissions": [
         "sidePanel",
-        "storage"
+        "storage",
+        "tabs"
       ],
 
       "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwoCI/8wHmexEmBZWwyO2nGAL+IuTmRDLdSE1P6OWdQee7UbTRtl28RwFgbVXcMyzDUt7YrQqUg56V/tzE8qupaVrbr0AmKzoJpK8u+UueFahZveTJ9Mw1khMWaijHXsvaEr4gXlpPkExCPYb8nksy/X9l/p+xKU+7WVvTaXEIMrJbMNEWl4OkLlk/FqZBvoC3XstjHU8vKdHc4JQ8EcDXcFrjBc4Lud6sqY9ZrjmcwCkRWPvrz5ic+KV80GazCUehPx1Dcjj2GaHRhWrlgWmF7KeB/80/Sw9ZwWQ2pFmCDCqLBkF2qaAuy2jaGsv56x5wqcEmYEvOQRorHIq674pMQIDAQAB",
@@ -26,5 +27,9 @@
           "uiDisp.js"
         ]
       }
-    ]
+    ],
+
+    "background": {
+      "service_worker": "background.js"
+    }
 } 
