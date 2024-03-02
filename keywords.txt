@@ -1,5 +1,59 @@
-invoice,new,message,file,request,action,verification,efax,voicemail,label,post,document,postal,calculations,copy,fedex,statement,financial,dhl,usps,notification,n,irs,no,delivery,ticket,free,now,click,urgent,winner,winning,congradulations,password,passwords,username,usernames,SSN,inv,required,8,shipment,ups,express,alert,confirmation,report,idnotification,tax,taxes
+Keywords are weighted on a scale of 1 - 10
+10 represents the highest likelihood of a keyword being indicitive of phishing while 1 represents the lowest likelihood.
+The weight of keywords effect the keyword score. This keyword score makes up 50% of the overall confidence score.
 
+invoice: 4
+new: 2
+message: 3
+file: 4
+request: 5
+action: 5
+verification: 6
+efax: 7
+voicemail: 6
+label: 3
+post: 2
+document: 5
+postal: 4
+calculations: 6
+copy: 3
+fedex: 6
+statement: 6
+financial: 7
+dhl: 5
+usps: 5
+notification: 4
+n: 1
+irs: 5
+no: 1
+delivery: 4
+ticket: 3
+free: 3
+now: 1
+click: 3
+urgent: 7
+winner: 4
+winning: 3
+congradulations: 3
+password: 9
+passwords: 9
+username: 8
+usernames: 8
+SSN: 10
+inv: 4
+required: 3
+8: 1
+shipment: 4
+ups: 4
+express: 4
+alert: 5
+confirmation: 5
+report: 3
+idnotification: 4
+tax: 5
+taxes: 5
+download: 6
+link: 5
 
 Sources:
 https://hubwisetech.com/the-most-commonly-used-email-keywords-to-look-for-to-avoid-phishing-scams/
