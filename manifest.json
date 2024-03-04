@@ -6,11 +6,13 @@
 
     "permissions": [
         "sidePanel",
-      {
+        "storage",
+        "tabs",
+        {
           "fileSystem": [
-      "/database/HLS.db"
+            "/database/HLS.db"
           ]
-      }
+        }
       ],
   
 
@@ -21,15 +23,19 @@
       "default_path": "sidebar/sidebar.html",
       "default_icon": "images/icon.png"
     },
-  
-  "content_scripts": [
-    {
-      "matches": [
-        "*://mail.google.com/*"
-      ],
-      "js": [
-        "uiDisp.js"
-      ]
+
+    "content_scripts": [
+      {
+        "matches": [
+          "*://mail.google.com/*"
+        ],
+        "js": [
+          "uiDisp.js"
+        ]
+      }
+    ],
+
+    "background": {
+      "service_worker": "background.js"
     }
-  ]
 } 
