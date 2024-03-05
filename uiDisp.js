@@ -84,6 +84,12 @@ function injectSidebarElements() {
   gmBodyDiv.style.padding = '10px';
   gmBodyDiv.textContent = "Grammar Errors: 0";
 
+  //TEST CODE
+  const scoreBodyDiv = document.createElement('div');
+  scoreBodyDiv.id = 'scoreBodyDiv';
+  scoreBodyDiv.style.adding = '10px';
+  scoreBodyDiv.textContent = "Confidence Score: 100%";
+
   // Append the textDiv to the sidebarDiv
   sidebarDiv.appendChild(textDiv);
 
@@ -93,6 +99,7 @@ function injectSidebarElements() {
   //TEST CODE
   sidebarDiv.appendChild(smBodyDiv);
   sidebarDiv.appendChild(gmBodyDiv);
+  sidebarDiv.appendChild(scoreBodyDiv);
 
   // Append the tab to the document body
   document.body.appendChild(tab);
@@ -125,6 +132,9 @@ function injectSidebarElements() {
     // Move the tab button
     tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
 
+    var tokens = null;
+    var numTokens = 0
+
     // Create a MutationObserver to watch for changes to the email body
     const observer = new MutationObserver(() => {
       // Select the email body element
@@ -133,11 +143,13 @@ function injectSidebarElements() {
       // Check if the email body is present and contains text
       if (emailBody && emailBody.textContent) {
         // Tokenize the email contents
-        const tokens = tokenizeEmailContents(emailBody.textContent);
+        tokens = tokenizeEmailContents(emailBody.textContent);
 
         if (tokens.length > 0) {
           // Display the tokens in the sidebar
           emailBodyDiv.textContent = tokens.join(' || ');
+          // Update numTokens
+          numTokens = tokens.length;
         }
       }
     });
@@ -186,6 +198,25 @@ function injectSidebarElements() {
         const grammarString = "Grammar Errors: " + grammarCount;
         smBodyDiv.textContent = spellingString;
         gmBodyDiv.textContent = grammarString;
+
+        // #TODO handle comparisons with keywords
+        const keywordScore = 0;
+
+        if (numTokens > 0) {
+          // #TODO incorporate spelling errors
+          const spellingScore = (spellingCount / numTokens) * 100;
+          // #TODO incorporate grammar errors
+          const grammarScore = (grammarCount / numTokens) * 100;
+          // Confidence score algorithm
+          const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
+          console.log(spellingCount);
+          console.log(numTokens);
+          console.log(spellingScore);
+          //console.log(grammarScore);
+          const scoreString = ("Confidnce Score: " + confidenceScore.toFixed(2) + '%');
+          scoreBodyDiv.textContent = scoreString;
+        }
+
       })
   });
 }
@@ -198,6 +229,7 @@ function removeSidebarElements() {
   const sidebarDiv = document.getElementById('sidebarDiv');
   const smBodyDiv = document.getElementById('smBodyDiv');
   const gmBodyDiv = document.getElementById('gmBodyDiv');
+  const scoreBodyDiv = document.getElementById('scoreBodyDiv');
 
   // Remove sidebar elements from the DOM if they exist
   if (sidebarButton) {
@@ -214,5 +246,8 @@ function removeSidebarElements() {
   }
   if (gmBodyDiv) {
     gmBodyDiv.remove();
+  }
+  if (scoreBodyDiv) {
+    scoreBodyDiv.remove();
   }
 }
