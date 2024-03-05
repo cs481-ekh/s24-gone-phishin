@@ -229,6 +229,7 @@ function removeSidebarElements() {
   const sidebarDiv = document.getElementById('sidebarDiv');
   const smBodyDiv = document.getElementById('smBodyDiv');
   const gmBodyDiv = document.getElementById('gmBodyDiv');
+  const scoreBodyDiv = document.getElementById('scoreBodyDiv');
 
   // Remove sidebar elements from the DOM if they exist
   if (sidebarButton) {
@@ -245,5 +246,8 @@ function removeSidebarElements() {
   }
   if (gmBodyDiv) {
     gmBodyDiv.remove();
+  }
+  if (scoreBodyDiv) {
+    scoreBodyDiv.remove();
   }
 }
