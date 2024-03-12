@@ -73,18 +73,6 @@ function injectSidebarElements() {
   emailBodyDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
 
   //TEST CODE
-  const smBodyDiv = document.createElement('div');
-  smBodyDiv.id = 'smBodyDiv';
-  smBodyDiv.style.padding = '10px';
-  smBodyDiv.textContent = "Spelling Errors: 0";
-
-  //TEST CODE
-  const gmBodyDiv = document.createElement('div');
-  gmBodyDiv.id = 'gmBodyDiv';
-  gmBodyDiv.style.padding = '10px';
-  gmBodyDiv.textContent = "Grammar Errors: 0";
-
-  //TEST CODE
   const scoreBodyDiv = document.createElement('div');
   scoreBodyDiv.id = 'scoreBodyDiv';
   scoreBodyDiv.style.adding = '10px';
@@ -97,8 +85,6 @@ function injectSidebarElements() {
   sidebarDiv.appendChild(emailBodyDiv);
 
   //TEST CODE
-  sidebarDiv.appendChild(smBodyDiv);
-  sidebarDiv.appendChild(gmBodyDiv);
   sidebarDiv.appendChild(scoreBodyDiv);
 
   // Append the tab to the document body
@@ -147,9 +133,77 @@ function injectSidebarElements() {
 
         if (tokens.length > 0) {
           // Display the tokens in the sidebar
-          emailBodyDiv.textContent = tokens.join(' || ');
+          // emailBodyDiv.textContent = tokens.join(' || ');
           // Update numTokens
           numTokens = tokens.length;
+
+          //Call LangaugeTool API to check for spelling errors
+          const params = new URLSearchParams();
+          params.append("text", document.querySelector('.a3s.aiL').textContent);
+          console.log(params.toString()); //FIXME debug
+          fetch("https://api.languagetoolplus.com/v2/check", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Accept": "application/json"
+            },
+            body: params.toString() + "&language=en-US&enabledOnly=false"
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then(data => {
+              console.log("API Response:", data);
+              const matchesArray = data.matches; // Extracting the matches array
+              console.log("Matches:", matchesArray);
+              let spellingErrors = [];
+              let grammarErrors = [];
+              let grammarContext = [];
+              let grammarMessage = [];
+              matchesArray.forEach(error => {
+                if (error.shortMessage == "Spelling mistake") {
+                  spellingErrors.push(error)
+                }
+                else {
+                  grammarErrors.push(error)
+                  grammarContext.push(error.context.text)
+                  grammarMessage.push(error.message)
+                }
+              })
+
+              //Extract spelling info
+              const spellingCount = spellingErrors ? spellingErrors.length : 0;
+
+              //Extract grammar info
+              const grammarCount = grammarErrors ? grammarErrors.length : 0; //Should add the context and short message sections
+              const spellingString = "Spelling Errors: " + spellingCount + "\n\n";
+              const grammarString = "Grammar Errors: " + grammarCount + " " + grammarContext + " " + grammarMessage;
+              emailBodyDiv.textContent = spellingString + grammarString;
+              // gmBodyDiv.textContent = grammarString
+
+              // #TODO handle comparisons with keywords
+              const keywordScore = 0;
+
+              if (numTokens > 0) {
+                // #TODO incorporate spelling errors
+                const spellingScore = (spellingCount / numTokens) * 100;
+                // #TODO incorporate grammar errors
+                const grammarScore = (grammarCount / numTokens) * 100;
+                // Confidence score algorithm
+                const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
+                console.log(spellingCount);
+                console.log(numTokens);
+                console.log(spellingScore);
+                //console.log(grammarScore);
+                const scoreString = ("Confidnce Score: " + confidenceScore.toFixed(2) + '%');
+                scoreBodyDiv.textContent = scoreString;
+              }
+
+            })
+          
         }
       }
     });
@@ -160,64 +214,64 @@ function injectSidebarElements() {
       childList: true,
     });
 
-    //Call LangaugeTool API to check for spelling errors
-    const params = new URLSearchParams();
-    params.append("text", document.querySelector('.a3s.aiL').textContent);
-    console.log(params.toString()); //FIXME debug
-    fetch("https://api.languagetoolplus.com/v2/check", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json"
-      },
-      body: params.toString() + "&language=en-US&enabledOnly=false"
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log("API Response:", data);
-        const matchesArray = data.matches; // Extracting the matches array
-        console.log("Matches:", matchesArray);
-        let spellingErrors = [];
-        let grammarErrors = [];
-        matchesArray.forEach(error => {
-          if (error.shortMessage == "Spelling mistake") {
-            spellingErrors.push(error)
-          }
-          else {
-            grammarErrors.push(error)
-          }
-        })
-        const spellingCount = spellingErrors ? spellingErrors.length : 0;
-        const grammarCount = grammarErrors ? grammarErrors.length : 0;
-        const spellingString = "Spelling Errors: " + spellingCount;
-        const grammarString = "Grammar Errors: " + grammarCount;
-        smBodyDiv.textContent = spellingString;
-        gmBodyDiv.textContent = grammarString;
+    // //Call LangaugeTool API to check for spelling errors
+    // const params = new URLSearchParams();
+    // params.append("text", document.querySelector('.a3s.aiL').textContent);
+    // console.log(params.toString()); //FIXME debug
+    // fetch("https://api.languagetoolplus.com/v2/check", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/x-www-form-urlencoded",
+    //     "Accept": "application/json"
+    //   },
+    //   body: params.toString() + "&language=en-US&enabledOnly=false"
+    // })
+    //   .then(response => {
+    //     if (!response.ok) {
+    //       throw new Error('Network response was not ok');
+    //     }
+    //     return response.json();
+    //   })
+    //   .then(data => {
+    //     console.log("API Response:", data);
+    //     const matchesArray = data.matches; // Extracting the matches array
+    //     console.log("Matches:", matchesArray);
+    //     let spellingErrors = [];
+    //     let grammarErrors = [];
+    //     matchesArray.forEach(error => {
+    //       if (error.shortMessage == "Spelling mistake") {
+    //         spellingErrors.push(error)
+    //       }
+    //       else {
+    //         grammarErrors.push(error)
+    //       }
+    //     })
+    //     const spellingCount = spellingErrors ? spellingErrors.length : 0;
+    //     const grammarCount = grammarErrors ? grammarErrors.length : 0; //Should add the context and short message sections
+    //     const spellingString = "Spelling Errors: " + spellingCount;
+    //     const grammarString = "Grammar Errors: " + grammarCount;
+    //     smBodyDiv.textContent = spellingString;
+    //     gmBodyDiv.textContent = grammarString
 
-        // #TODO handle comparisons with keywords
-        const keywordScore = 0;
+    //     // #TODO handle comparisons with keywords
+    //     const keywordScore = 0;
 
-        if (numTokens > 0) {
-          // #TODO incorporate spelling errors
-          const spellingScore = (spellingCount / numTokens) * 100;
-          // #TODO incorporate grammar errors
-          const grammarScore = (grammarCount / numTokens) * 100;
-          // Confidence score algorithm
-          const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
-          console.log(spellingCount);
-          console.log(numTokens);
-          console.log(spellingScore);
-          //console.log(grammarScore);
-          const scoreString = ("Confidnce Score: " + confidenceScore.toFixed(2) + '%');
-          scoreBodyDiv.textContent = scoreString;
-        }
+    //     if (numTokens > 0) {
+    //       // #TODO incorporate spelling errors
+    //       const spellingScore = (spellingCount / numTokens) * 100;
+    //       // #TODO incorporate grammar errors
+    //       const grammarScore = (grammarCount / numTokens) * 100;
+    //       // Confidence score algorithm
+    //       const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
+    //       console.log(spellingCount);
+    //       console.log(numTokens);
+    //       console.log(spellingScore);
+    //       //console.log(grammarScore);
+    //       const scoreString = ("Confidnce Score: " + confidenceScore.toFixed(2) + '%');
+    //       scoreBodyDiv.textContent = scoreString;
+    //     }
 
-      })
+    //   })
   });
 }
 
@@ -227,8 +281,6 @@ function removeSidebarElements() {
   const button = document.getElementById('sidebarButton');
   const titleBar = document.getElementById('sidebarTitle');
   const sidebarDiv = document.getElementById('sidebarDiv');
-  const smBodyDiv = document.getElementById('smBodyDiv');
-  const gmBodyDiv = document.getElementById('gmBodyDiv');
   const scoreBodyDiv = document.getElementById('scoreBodyDiv');
 
   // Remove sidebar elements from the DOM if they exist
@@ -240,12 +292,6 @@ function removeSidebarElements() {
   }
   if (sidebarDiv) {
     sidebarDiv.remove();
-  }
-  if (smBodyDiv) {
-    smBodyDiv.remove();
-  }
-  if (gmBodyDiv) {
-    gmBodyDiv.remove();
   }
   if (scoreBodyDiv) {
     scoreBodyDiv.remove();
