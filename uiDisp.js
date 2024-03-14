@@ -73,18 +73,6 @@ function injectSidebarElements() {
   emailBodyDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
 
   //TEST CODE
-  const smBodyDiv = document.createElement('div');
-  smBodyDiv.id = 'smBodyDiv';
-  smBodyDiv.style.padding = '10px';
-  smBodyDiv.textContent = "Spelling Errors: 0";
-
-  //TEST CODE
-  const gmBodyDiv = document.createElement('div');
-  gmBodyDiv.id = 'gmBodyDiv';
-  gmBodyDiv.style.padding = '10px';
-  gmBodyDiv.textContent = "Grammar Errors: 0";
-
-  //TEST CODE
   const scoreBodyDiv = document.createElement('div');
   scoreBodyDiv.id = 'scoreBodyDiv';
   scoreBodyDiv.style.adding = '10px';
@@ -97,8 +85,6 @@ function injectSidebarElements() {
   sidebarDiv.appendChild(emailBodyDiv);
 
   //TEST CODE
-  sidebarDiv.appendChild(smBodyDiv);
-  sidebarDiv.appendChild(gmBodyDiv);
   sidebarDiv.appendChild(scoreBodyDiv);
 
   // Append the tab to the document body
@@ -147,10 +133,10 @@ function injectSidebarElements() {
 
         if (tokens.length > 0) {
           // Display the tokens in the sidebar
-          emailBodyDiv.textContent = tokens.join(' || ');
+          // emailBodyDiv.textContent = tokens.join(' || ');
           // Update numTokens
           numTokens = tokens.length;
-        }
+         }
       }
     });
 
@@ -192,12 +178,20 @@ function injectSidebarElements() {
             grammarErrors.push(error)
           }
         })
+        
+        //Extract spelling info
         const spellingCount = spellingErrors ? spellingErrors.length : 0;
-        const grammarCount = grammarErrors ? grammarErrors.length : 0;
-        const spellingString = "Spelling Errors: " + spellingCount;
-        const grammarString = "Grammar Errors: " + grammarCount;
-        smBodyDiv.textContent = spellingString;
-        gmBodyDiv.textContent = grammarString;
+        const spellingString = "Spelling Errors: " + spellingCount + "<br><br>";
+
+        //Extract grammar info
+        let grammarCount = grammarErrors ? grammarErrors.length : 0; 
+        let grammarString = "<b>Grammar</b><br> Often a mutltitude of grammar errors can be a sign of phishing. Grammar factors into 25% of the phishing score. <br><br> Grammar Errors: " + grammarCount + "<br><br>";
+        grammarErrors.forEach(error => {
+          grammarString += "Error: " + error.message + "<br>";
+          grammarString += "Context: " + error.context.text + "<br><br>";
+        })
+
+        emailBodyDiv.innerHTML = spellingString + grammarString;
 
         // #TODO handle comparisons with keywords
         const keywordScore = 0;
@@ -227,8 +221,6 @@ function removeSidebarElements() {
   const button = document.getElementById('sidebarButton');
   const titleBar = document.getElementById('sidebarTitle');
   const sidebarDiv = document.getElementById('sidebarDiv');
-  const smBodyDiv = document.getElementById('smBodyDiv');
-  const gmBodyDiv = document.getElementById('gmBodyDiv');
   const scoreBodyDiv = document.getElementById('scoreBodyDiv');
 
   // Remove sidebar elements from the DOM if they exist
@@ -240,12 +232,6 @@ function removeSidebarElements() {
   }
   if (sidebarDiv) {
     sidebarDiv.remove();
-  }
-  if (smBodyDiv) {
-    smBodyDiv.remove();
-  }
-  if (gmBodyDiv) {
-    gmBodyDiv.remove();
   }
   if (scoreBodyDiv) {
     scoreBodyDiv.remove();
