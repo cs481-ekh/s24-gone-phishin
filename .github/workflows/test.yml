@@ -15,8 +15,6 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v4
 
-        - name: Install dependencies
-          run: npm install
 
         - name: Build podman image
           run: podman build -t hooklinesecureimage:0.1 .
