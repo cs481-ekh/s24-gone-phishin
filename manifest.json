@@ -7,12 +7,7 @@
     "permissions": [
         "sidePanel",
         "storage",
-        "tabs",
-        {
-          "fileSystem": [
-            "/database/HLS.db"
-          ]
-        }
+        "tabs"
       ],
   
 
@@ -29,9 +24,7 @@
         "matches": [
           "*://mail.google.com/*"
         ],
-        "js": [
-          "uiDisp.js"
-        ]
+        "js":  ["/database/dbHandler.js", "uiDisp.js"]
       }
     ],
 
