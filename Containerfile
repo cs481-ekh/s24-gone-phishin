@@ -6,7 +6,7 @@ RUN npm install -g eslint stylelint htmlhint jsonlint
 
 # Install OpenSSL
 RUN apt-get update && \
-    apt-get install -y openssl zip sqlite3
+    apt-get install -y openssl zip
 
 RUN apt-get install dos2unix
 

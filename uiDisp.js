@@ -1,5 +1,5 @@
 // Displays interface, credit to ChatGPT
-
+let receivedKWs;
 //Set starting state
 chrome.storage.sync.get('enabled', function (result) {
   if (result.enabled) {
@@ -14,7 +14,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.enabled !== undefined) {
     var isEnabled = message.enabled;
     console.log('Received toggle state:', isEnabled);
-
+    // Event Timestamp
+    chrome.runtime.sendMessage({ enabled: isEnabled });
     // Trigger event or perform actions based on the received toggle state
     if (isEnabled) {
       // Inject content script
@@ -26,6 +27,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       console.log('Content script removed');
       removeSidebarElements();
     }
+  } else if (message.keywords) {
+    receivedKWs = message.keywords;
+    console.log('Received keywords from background:', keywords);
   }
 })
 
@@ -78,6 +82,11 @@ function injectSidebarElements() {
   scoreBodyDiv.style.adding = '10px';
   scoreBodyDiv.textContent = "Confidence Score: 100%";
 
+  //TEST
+  const matchedDiv = document.createElement('div');
+  matchedDiv.id = 'matchedDiv';
+  matchedDiv.style.padding = '10px';
+
   // Append the textDiv to the sidebarDiv
   sidebarDiv.appendChild(textDiv);
 
@@ -86,19 +95,32 @@ function injectSidebarElements() {
 
   //TEST CODE
   sidebarDiv.appendChild(scoreBodyDiv);
+  sidebarDiv.appendChild(matchedDiv);
 
   // Append the tab to the document body
   document.body.appendChild(tab);
 
+  let matchedKeywords = [];
+
   // Function to tokenize email contents
   function tokenizeEmailContents(emailBody) {
-    // Split email contents into tokens
-    const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
+      // Split email contents into tokens
+      const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
+  
+      // Remove unneccessary tokens
+      const filteredTokens = tokens.filter(token => token !== '' && token !== '‌');
 
-    // Remove unneccessary tokens
-    const filteredTokens = tokens.filter(token => token !== '' && token !== '‌');
-
-    return filteredTokens;
+      filteredTokens.forEach(token => {
+          const lowercaseToken = token.toLowerCase();
+          receivedKWs.forEach(keyword => {
+              const lowercaseKeyword = keyword.keyword.toLowerCase();
+              if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword.toLowerCase() === lowercaseKeyword)) {
+                  matchedKeywords.push({ keyword: keyword.keyword, riskScore: keyword.riskScore });
+              }
+          });
+      });
+      // Display matched keywords
+      return filteredTokens;
   }
 
   // Add event listener to the tab
@@ -145,6 +167,16 @@ function injectSidebarElements() {
       subtree: true,
       childList: true,
     });
+
+    if(matchedKeywords) {
+      console.log(matchedKeywords);
+      let matchedKeywordsText = '';
+      matchedKeywords.forEach(({ keyword, riskScore }) => {
+        matchedKeywordsText += `${keyword} : ${riskScore}\n`;
+      });
+      console.log(matchedKeywordsText);
+      matchedDiv.textContent = "yo " + matchedKeywordsText;
+    }
 
     //Call LangaugeTool API to check for spelling errors
     const params = new URLSearchParams();
@@ -198,7 +230,14 @@ function injectSidebarElements() {
 
         // #TODO handle comparisons with keywords
         const keywordScore = 0;
-
+        if(matchedKeywords) {
+          console.log(matchedKeywords);
+          let matchedKeywordsText = '';
+          matchedKeywords.forEach(({ keyword, riskScore }) => {
+            matchedKeywordsText += `${keyword} : ${riskScore}\n`;
+          });
+          matchedDiv.textContent = matchedKeywordsText;
+      }
         if (numTokens > 0) {
           // #TODO incorporate spelling errors
           const spellingScore = (spellingCount / numTokens) * 100;
@@ -225,6 +264,7 @@ function removeSidebarElements() {
   const titleBar = document.getElementById('sidebarTitle');
   const sidebarDiv = document.getElementById('sidebarDiv');
   const scoreBodyDiv = document.getElementById('scoreBodyDiv');
+  const matchedDiv = document.getElementById('matchedDiv');
 
   // Remove sidebar elements from the DOM if they exist
   if (sidebarButton) {
@@ -238,5 +278,8 @@ function removeSidebarElements() {
   }
   if (scoreBodyDiv) {
     scoreBodyDiv.remove();
+  }
+  if (matchedDiv) {
+    matchedDiv.remove();
   }
 }

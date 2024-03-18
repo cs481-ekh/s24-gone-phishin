@@ -25,7 +25,6 @@ usps: 5
 notification: 4
 n: 1
 irs: 5
-no: 1
 delivery: 4
 ticket: 3
 free: 3
@@ -34,7 +33,7 @@ click: 3
 urgent: 7
 winner: 4
 winning: 3
-congradulations: 3
+congratulations: 3
 password: 9
 passwords: 9
 username: 8

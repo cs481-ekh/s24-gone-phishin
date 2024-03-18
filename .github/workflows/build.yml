@@ -14,6 +14,7 @@ jobs:
         steps:
           - uses: actions/checkout@v4
 
+
           - name: Build podman image
             run: podman build -t hooklinesecureimage:0.1 .
 
