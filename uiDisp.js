@@ -180,8 +180,11 @@ function injectSidebarElements() {
         })
         
         //Extract spelling info
-        const spellingCount = spellingErrors ? spellingErrors.length : 0;
-        const spellingString = "Spelling Errors: " + spellingCount + "<br><br>";
+        let spellingCount = spellingErrors ? spellingErrors.length : 0;
+        let spellingString = "<b>Spelling</b><br> Often a mutltitude of spelling errors can be a sign of phishing. Spelling factors into 25% of the phishing score. <br><br> Spelling Errors: " + spellingCount + "<br><br>";
+        spellingErrors.forEach(error => {
+          spellingString += "Context: " + error.context.text + "<br><br>";
+        })
 
         //Extract grammar info
         let grammarCount = grammarErrors ? grammarErrors.length : 0; 
