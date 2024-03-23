@@ -61,25 +61,58 @@ function injectSidebarElements() {
   document.body.appendChild(sidebarDiv);
 
   // Create a div element for the title text
-  const textDiv = document.createElement('div');
-  textDiv.id = 'sidebarTitle';
-  textDiv.textContent = 'Hook, Line, and Secure';
-  textDiv.style.padding = '10px';
-  textDiv.style.backgroundColor = 'blue';
-  textDiv.style.color = 'white';
+  const titleDiv = document.createElement('div');
+  titleDiv.id = 'sidebarTitle';
+  titleDiv.textContent = 'Hook, Line, and Secure';
+  titleDiv.style.padding = '10px';
+  titleDiv.style.backgroundColor = 'blue';
+  titleDiv.style.color = 'white';
 
-  // Create a div element for the email body contents
-  const emailBodyDiv = document.createElement('div');
-  emailBodyDiv.id = 'emailBodyDiv'; // Set an id for the div
-  emailBodyDiv.style.overflowY = 'scroll'; // Add scroll behavior if needed
-  emailBodyDiv.style.height = '94%'; // Set height to fill the sidebar
-  emailBodyDiv.style.padding = '10px'; // Add padding for spacing
-  emailBodyDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
+  // Create a div element for the email analysis contents
+  const analysisDiv = document.createElement('div');
+  analysisDiv.id = 'analysisDiv'; // Set an id for the div
+  analysisDiv.style.overflowY = 'scroll'; // Add scroll behavior if needed
+  analysisDiv.style.height = '89%'; // Set height to fill the sidebar
+  analysisDiv.style.padding = '10px'; // Add padding for spacing
+  analysisDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
+
+  const spellingButton = document.createElement('button');
+  spellingButton.class = "collapsible";
+  spellingButton.style.backgroundColor = "#ccc";
+  spellingButton.style.color = "#222";
+  spellingButton.style.cursor = "pointer";
+  spellingButton.style.padding = "18px";
+  spellingButton.style.width = '100%';
+  spellingButton.style.border = 'none';
+  spellingButton.style.textAlign = 'left';
+  spellingButton.style.outline = 'none';
+  spellingButton.style.fontSize = '20px';
+
+  const spellingDiv = document.createElement('div');
+  spellingDiv.id = 'spellingDiv';
+  spellingDiv.style.display = 'none';
+
+  const grammarButton = document.createElement('button');
+  grammarButton.class = "collapsible";
+  grammarButton.style.backgroundColor = "#ccc";
+  grammarButton.style.color = "#222";
+  grammarButton.style.cursor = "pointer";
+  grammarButton.style.padding = "18px";
+  grammarButton.style.width = '100%';
+  grammarButton.style.border = 'none';
+  grammarButton.style.textAlign = 'left';
+  grammarButton.style.outline = 'none';
+  grammarButton.style.fontSize = '20px';
+
+  const grammarDiv = document.createElement('div');
+  grammarDiv.id = 'grammarDiv';
+  grammarDiv.style.display = 'none';
 
   //TEST CODE
   const scoreBodyDiv = document.createElement('div');
   scoreBodyDiv.id = 'scoreBodyDiv';
-  scoreBodyDiv.style.adding = '10px';
+  scoreBodyDiv.style.height = '2%';
+  scoreBodyDiv.style.padding = '10px';
   scoreBodyDiv.textContent = "Confidence Score: 100%";
 
   //TEST
@@ -87,15 +120,19 @@ function injectSidebarElements() {
   matchedDiv.id = 'matchedDiv';
   matchedDiv.style.padding = '10px';
 
-  // Append the textDiv to the sidebarDiv
-  sidebarDiv.appendChild(textDiv);
+  // Append the titleDiv to the sidebarDiv
+  sidebarDiv.appendChild(titleDiv);
 
-  // Append the emailBodyDiv to the sidebarDiv
-  sidebarDiv.appendChild(emailBodyDiv);
+  // Append the analysisDiv to the sidebarDiv
+  sidebarDiv.appendChild(scoreBodyDiv);
+  sidebarDiv.appendChild(analysisDiv);
 
   //TEST CODE
-  sidebarDiv.appendChild(scoreBodyDiv);
-  sidebarDiv.appendChild(matchedDiv);
+  analysisDiv.appendChild(spellingButton);
+  analysisDiv.appendChild(spellingDiv);
+  analysisDiv.appendChild(grammarButton);
+  analysisDiv.appendChild(grammarDiv);
+  analysisDiv.appendChild(matchedDiv);
 
   // Append the tab to the document body
   document.body.appendChild(tab);
@@ -155,7 +192,7 @@ function injectSidebarElements() {
 
         if (tokens.length > 0) {
           // Display the tokens in the sidebar
-          // emailBodyDiv.textContent = tokens.join(' || ');
+          // analysisDiv.textContent = tokens.join(' || ');
           // Update numTokens
           numTokens = tokens.length;
          }
@@ -213,20 +250,38 @@ function injectSidebarElements() {
         
         //Extract spelling info
         let spellingCount = spellingErrors ? spellingErrors.length : 0;
-        let spellingString = "<b>Spelling</b><br> Often a mutltitude of spelling errors can be a sign of phishing. Spelling factors into 25% of the phishing score. <br><br> Spelling Errors: " + spellingCount + "<br><br>";
+        spellingButton.innerHTML = "<b>Spelling Errors: " + spellingCount + "</b>";
+        let spellingString = "<br>Often a multitude of spelling errors can be a sign of phishing. Spelling factors into 25% of the phishing score.<br><br>";
         spellingErrors.forEach(error => {
           spellingString += "Context: " + error.context.text + "<br><br>";
         })
 
+        spellingButton.addEventListener("click", function() {
+          if(spellingDiv.style.display === 'block'){
+            spellingDiv.style.display = 'none';
+          } else {
+            spellingDiv.style.display = 'block';
+          }
+        })
+
         //Extract grammar info
         let grammarCount = grammarErrors ? grammarErrors.length : 0; 
-        let grammarString = "<b>Grammar</b><br> Often a mutltitude of grammar errors can be a sign of phishing. Grammar factors into 25% of the phishing score. <br><br> Grammar Errors: " + grammarCount + "<br><br>";
+        grammarButton.innerHTML = "<b>Grammar Errors: " + grammarCount + "</b>";
+        let grammarString = "<br>Often a multitude of grammar errors can be a sign of phishing. Grammar factors into 25% of the phishing score.<br><br>";
         grammarErrors.forEach(error => {
           grammarString += "Error: " + error.message + "<br>";
           grammarString += "Context: " + error.context.text + "<br><br>";
         })
 
-        emailBodyDiv.innerHTML = spellingString + grammarString;
+        grammarButton.addEventListener("click", function() {
+          if(grammarDiv.style.display === 'block'){
+            grammarDiv.style.display = 'none';
+          } else {
+            grammarDiv.style.display = 'block';
+          }
+
+        spellingDiv.innerHTML = spellingString;
+        grammarDiv.innerHTML = grammarString;
 
         // #TODO handle comparisons with keywords
         const keywordScore = 0;
@@ -249,12 +304,22 @@ function injectSidebarElements() {
           console.log(numTokens);
           console.log(spellingScore);
           //console.log(grammarScore);
-          const scoreString = ("Confidnce Score: " + confidenceScore.toFixed(2) + '%');
+          const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
           scoreBodyDiv.textContent = scoreString;
+          if(confidenceScore <= 25){
+            scoreBodyDiv.style.backgroundColor = '#00ff00';
+          } else if(confidenceScore <= 50){
+            scoreBodyDiv.style.backgroundColor = '#ffff00';
+          } else if(confidenceScore <= 75){
+            scoreBodyDiv.style.backgroundColor = '#ff8800';
+          } else {
+            scoreBodyDiv.style.backgroundColor = '#ff0000';
+          }
         }
 
       })
   });
+})
 }
 
 // Function to remove sidebar elements
