@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 // Function to inject sidebar elements
 function injectSidebarElements() {
-  // Create the tab
+  // Create the tab button
   const tab = document.createElement('button');
   tab.id = 'sidebarButton';
   tab.textContent = 'Tab'; // Set the text for the tab button
@@ -43,7 +43,7 @@ function injectSidebarElements() {
   tab.style.right = '0';
   tab.style.top = '50%';
   tab.style.transform = 'translateY(-50%)';
-  tab.style.zIndex = '9999999';
+  tab.style.zIndex = '999';
 
   // Create a sidebar within the Gmail interface
   const sidebarDiv = document.createElement('div');
@@ -55,7 +55,7 @@ function injectSidebarElements() {
   sidebarDiv.style.height = '70%';
   sidebarDiv.style.backgroundColor = 'white';
   sidebarDiv.style.border = '1px solid black';
-  sidebarDiv.style.zIndex = '999999';
+  sidebarDiv.style.zIndex = '1';
 
   // Append the sidebarDiv to the document body
   document.body.appendChild(sidebarDiv);
