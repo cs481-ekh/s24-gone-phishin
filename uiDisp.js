@@ -168,13 +168,15 @@ function injectSidebarElements() {
       childList: true,
     });
 
+    var totalRiskScore = 0;
+
     if(matchedKeywords) {
       console.log(matchedKeywords);
       let matchedKeywordsText = '';
       matchedKeywords.forEach(({ keyword, riskScore }) => {
         matchedKeywordsText += `${keyword} : ${riskScore}\n`;
       });
-      console.log(matchedKeywordsText);
+      console.log('keyword matches: ' + matchedKeywordsText);
       matchedDiv.textContent = "yo " + matchedKeywordsText;
     }
 
@@ -244,12 +246,13 @@ function injectSidebarElements() {
           // Grammar errors
           const grammarScore = Math.min(((grammarCount / numTokens) * 300), 100);
           /// Keyword matches
-          const keywordScore = Math.min(((tempKeywordScore / numTokens) * 100), 100);
+          const keywordScore = Math.min(((totalRiskScore / numTokens) * 100), 100);
           // Confidence score algorithm
           const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
-          console.log(spellingCount);
           console.log(numTokens);
           console.log(spellingScore);
+          console.log(grammarScore)
+          console.log(totalRiskScore);
           //console.log(grammarScore);
           const scoreString = ("Confidnce Score: " + confidenceScore.toFixed(2) + '%');
           scoreBodyDiv.textContent = scoreString;
