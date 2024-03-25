@@ -43,7 +43,7 @@ function injectSidebarElements() {
   tab.style.right = '0';
   tab.style.top = '50%';
   tab.style.transform = 'translateY(-50%)';
-  tab.style.zIndex = '999';
+  tab.style.zIndex = '1';
 
   // Create a sidebar within the Gmail interface
   const sidebarDiv = document.createElement('div');
