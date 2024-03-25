@@ -169,13 +169,13 @@ function injectSidebarElements() {
     });
 
     if(matchedKeywords) {
+      matchedKeywords = [];
       console.log(matchedKeywords);
       let matchedKeywordsText = '';
       matchedKeywords.forEach(({ keyword, riskScore }) => {
         matchedKeywordsText += `${keyword} : ${riskScore}\n`;
       });
-      console.log(matchedKeywordsText);
-      matchedDiv.textContent = "yo " + matchedKeywordsText;
+      matchedDiv.textContent =" " + matchedKeywordsText;
     }
 
     //Call LangaugeTool API to check for spelling errors
@@ -225,18 +225,19 @@ function injectSidebarElements() {
           grammarString += "Error: " + error.message + "<br>";
           grammarString += "Context: " + error.context.text + "<br><br>";
         })
-
-        emailBodyDiv.innerHTML = spellingString + grammarString;
+ 
 
         // #TODO handle comparisons with keywords
         const keywordScore = 0;
         if(matchedKeywords) {
+          let keyWordLog = "<b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br> Keywords found: " + matchedKeywords.length + "<br><br>";
           console.log(matchedKeywords);
           let matchedKeywordsText = '';
           matchedKeywords.forEach(({ keyword, riskScore }) => {
-            matchedKeywordsText += `${keyword} : ${riskScore}\n`;
+            matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
           });
-          matchedDiv.textContent = matchedKeywordsText;
+          keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
+          emailBodyDiv.innerHTML = keyWordLog + spellingString + grammarString;
       }
         if (numTokens > 0) {
           // #TODO incorporate spelling errors
@@ -249,7 +250,7 @@ function injectSidebarElements() {
           console.log(numTokens);
           console.log(spellingScore);
           //console.log(grammarScore);
-          const scoreString = ("Confidnce Score: " + confidenceScore.toFixed(2) + '%');
+          const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
           scoreBodyDiv.textContent = scoreString;
         }
 
@@ -265,7 +266,6 @@ function removeSidebarElements() {
   const sidebarDiv = document.getElementById('sidebarDiv');
   const scoreBodyDiv = document.getElementById('scoreBodyDiv');
   const matchedDiv = document.getElementById('matchedDiv');
-
   // Remove sidebar elements from the DOM if they exist
   if (sidebarButton) {
     sidebarButton.remove();
