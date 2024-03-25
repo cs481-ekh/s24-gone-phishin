@@ -229,7 +229,7 @@ function injectSidebarElements() {
         emailBodyDiv.innerHTML = spellingString + grammarString;
 
         // #TODO handle comparisons with keywords
-        const keywordScore = 0;
+        const tempKeywordScore = 0;
         if(matchedKeywords) {
           console.log(matchedKeywords);
           let matchedKeywordsText = '';
@@ -239,10 +239,12 @@ function injectSidebarElements() {
           matchedDiv.textContent = matchedKeywordsText;
       }
         if (numTokens > 0) {
-          // #TODO incorporate spelling errors
-          const spellingScore = (spellingCount / numTokens) * 100;
-          // #TODO incorporate grammar errors
-          const grammarScore = (grammarCount / numTokens) * 100;
+          // Spelling errors
+          const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
+          // Grammar errors
+          const grammarScore = Math.min(((grammarCount / numTokens) * 300), 100);
+          /// Keyword matches
+          const keywordScore = Math.min(((tempKeywordScore / numTokens) * 100), 100);
           // Confidence score algorithm
           const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
           console.log(spellingCount);
