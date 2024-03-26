@@ -21,7 +21,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       // Inject content script
       console.log('Content script injected');
       injectSidebarElements();
-      
+
     } else {
       // Remove content script
       console.log('Content script removed');
@@ -43,7 +43,7 @@ function injectSidebarElements() {
   tab.style.right = '0';
   tab.style.top = '50%';
   tab.style.transform = 'translateY(-50%)';
-  tab.style.zIndex = '1';
+  tab.style.zIndex = '1000000000000000';
 
   // Create a sidebar within the Gmail interface
   const sidebarDiv = document.createElement('div');
@@ -108,17 +108,26 @@ function injectSidebarElements() {
   grammarDiv.id = 'grammarDiv';
   grammarDiv.style.display = 'none';
 
-  //TEST CODE
   const scoreBodyDiv = document.createElement('div');
   scoreBodyDiv.id = 'scoreBodyDiv';
   scoreBodyDiv.style.height = '2%';
   scoreBodyDiv.style.padding = '10px';
-  scoreBodyDiv.textContent = "Confidence Score: 100%";
 
-  //TEST
+  const matchedButton = document.createElement('button');
+  matchedButton.class = "collapsible";
+  matchedButton.style.backgroundColor = "#ccc";
+  matchedButton.style.color = "#222";
+  matchedButton.style.cursor = "pointer";
+  matchedButton.style.padding = "18px";
+  matchedButton.style.width = '100%';
+  matchedButton.style.border = 'none';
+  matchedButton.style.textAlign = 'left';
+  matchedButton.style.outline = 'none';
+  matchedButton.style.fontSize = '20px';
+
   const matchedDiv = document.createElement('div');
   matchedDiv.id = 'matchedDiv';
-  matchedDiv.style.padding = '10px';
+  matchedDiv.style.display = 'none';
 
   // Append the titleDiv to the sidebarDiv
   sidebarDiv.appendChild(titleDiv);
@@ -132,6 +141,7 @@ function injectSidebarElements() {
   analysisDiv.appendChild(spellingDiv);
   analysisDiv.appendChild(grammarButton);
   analysisDiv.appendChild(grammarDiv);
+  analysisDiv.appendChild(matchedButton);
   analysisDiv.appendChild(matchedDiv);
 
   // Append the tab to the document body
@@ -141,23 +151,23 @@ function injectSidebarElements() {
 
   // Function to tokenize email contents
   function tokenizeEmailContents(emailBody) {
-      // Split email contents into tokens
-      const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
-  
-      // Remove unneccessary tokens
-      const filteredTokens = tokens.filter(token => token !== '' && token !== '‌');
+    // Split email contents into tokens
+    const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
 
-      filteredTokens.forEach(token => {
-          const lowercaseToken = token.toLowerCase();
-          receivedKWs.forEach(keyword => {
-              const lowercaseKeyword = keyword.keyword.toLowerCase();
-              if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword.toLowerCase() === lowercaseKeyword)) {
-                  matchedKeywords.push({ keyword: keyword.keyword, riskScore: keyword.riskScore });
-              }
-          });
+    // Remove unneccessary tokens
+    const filteredTokens = tokens.filter(token => token !== '' && token !== '‌');
+
+    filteredTokens.forEach(token => {
+      const lowercaseToken = token.toLowerCase();
+      receivedKWs.forEach(keyword => {
+        const lowercaseKeyword = keyword.keyword.toLowerCase();
+        if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword.toLowerCase() === lowercaseKeyword)) {
+          matchedKeywords.push({ keyword: keyword.keyword, riskScore: keyword.riskScore });
+        }
       });
-      // Display matched keywords
-      return filteredTokens;
+    });
+    // Display matched keywords
+    return filteredTokens;
   }
 
   // Add event listener to the tab
@@ -195,7 +205,7 @@ function injectSidebarElements() {
           // analysisDiv.textContent = tokens.join(' || ');
           // Update numTokens
           numTokens = tokens.length;
-         }
+        }
       }
     });
 
@@ -205,14 +215,14 @@ function injectSidebarElements() {
       childList: true,
     });
 
-    if(matchedKeywords) {
+    if (matchedKeywords) {
       matchedKeywords = [];
       console.log(matchedKeywords);
       let matchedKeywordsText = '';
       matchedKeywords.forEach(({ keyword, riskScore }) => {
         matchedKeywordsText += `${keyword} : ${riskScore}\n`;
       });
-      matchedDiv.textContent =" " + matchedKeywordsText;
+      matchedDiv.textContent = " " + matchedKeywordsText;
     }
 
     //Call LangaugeTool API to check for spelling errors
@@ -247,7 +257,7 @@ function injectSidebarElements() {
             grammarErrors.push(error)
           }
         })
-        
+
         //Extract spelling info
         let spellingCount = spellingErrors ? spellingErrors.length : 0;
         spellingButton.innerHTML = "<b>Spelling Errors: " + spellingCount + "</b>";
@@ -256,8 +266,8 @@ function injectSidebarElements() {
           spellingString += "Context: " + error.context.text + "<br><br>";
         })
 
-        spellingButton.addEventListener("click", function() {
-          if(spellingDiv.style.display === 'block'){
+        spellingButton.addEventListener("click", function () {
+          if (spellingDiv.style.display === 'block') {
             spellingDiv.style.display = 'none';
           } else {
             spellingDiv.style.display = 'block';
@@ -265,7 +275,7 @@ function injectSidebarElements() {
         })
 
         //Extract grammar info
-        let grammarCount = grammarErrors ? grammarErrors.length : 0; 
+        let grammarCount = grammarErrors ? grammarErrors.length : 0;
         grammarButton.innerHTML = "<b>Grammar Errors: " + grammarCount + "</b>";
         let grammarString = "<br>Often a multitude of grammar errors can be a sign of phishing. Grammar factors into 25% of the phishing score.<br><br>";
         grammarErrors.forEach(error => {
@@ -273,29 +283,40 @@ function injectSidebarElements() {
           grammarString += "Context: " + error.context.text + "<br><br>";
         })
 
-        grammarButton.addEventListener("click", function() {
-          if(grammarDiv.style.display === 'block'){
+        grammarButton.addEventListener("click", function () {
+          if (grammarDiv.style.display === 'block') {
             grammarDiv.style.display = 'none';
           } else {
             grammarDiv.style.display = 'block';
           }
+        });
 
         spellingDiv.innerHTML = spellingString;
         grammarDiv.innerHTML = grammarString;
 
+        matchedButton.addEventListener("click", function () {
+          if (matchedDiv.style.display === 'block') {
+            matchedDiv.style.display = 'none';
+          } else {
+            matchedDiv.style.display = 'block'
+          }
+        });
+
         // #TODO handle comparisons with keywords
         const tempKeywordScore = 0;
-        if(matchedKeywords) {
-          let keyWordLog = "<b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br> Keywords found: " + matchedKeywords.length + "<br><br>";
+        if (matchedKeywords) {
+          let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
           console.log(matchedKeywords);
           let matchedKeywordsText = '';
           matchedKeywords.forEach(({ keyword, riskScore }) => {
             matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
           });
           keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
-          emailBodyDiv.innerHTML = keyWordLog + spellingString + grammarString;
-      }
+          matchedDiv.innerHTML = keyWordLog;
+          matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
+        }
         if (numTokens > 0) {
+          console.log("bleh")
           // Spelling errors
           const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
           // Grammar errors
@@ -310,20 +331,18 @@ function injectSidebarElements() {
           //console.log(grammarScore);
           const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
           scoreBodyDiv.textContent = scoreString;
-          if(confidenceScore <= 25){
+          if (confidenceScore <= 25) {
             scoreBodyDiv.style.backgroundColor = '#00ff00';
-          } else if(confidenceScore <= 50){
+          } else if (confidenceScore <= 50) {
             scoreBodyDiv.style.backgroundColor = '#ffff00';
-          } else if(confidenceScore <= 75){
+          } else if (confidenceScore <= 75) {
             scoreBodyDiv.style.backgroundColor = '#ff8800';
           } else {
             scoreBodyDiv.style.backgroundColor = '#ff0000';
           }
         }
-
-      })
-  });
-})
+      });
+  })
 }
 
 // Function to remove sidebar elements
