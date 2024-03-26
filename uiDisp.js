@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 // Function to inject sidebar elements
 function injectSidebarElements() {
-  // Create the tab
+  // Create the tab button
   const tab = document.createElement('button');
   tab.id = 'sidebarButton';
   tab.textContent = 'Tab'; // Set the text for the tab button
@@ -43,7 +43,7 @@ function injectSidebarElements() {
   tab.style.right = '0';
   tab.style.top = '50%';
   tab.style.transform = 'translateY(-50%)';
-  tab.style.zIndex = '9999999';
+  tab.style.zIndex = '1';
 
   // Create a sidebar within the Gmail interface
   const sidebarDiv = document.createElement('div');
@@ -55,7 +55,7 @@ function injectSidebarElements() {
   sidebarDiv.style.height = '70%';
   sidebarDiv.style.backgroundColor = 'white';
   sidebarDiv.style.border = '1px solid black';
-  sidebarDiv.style.zIndex = '999999';
+  sidebarDiv.style.zIndex = '1';
 
   // Append the sidebarDiv to the document body
   document.body.appendChild(sidebarDiv);
@@ -206,13 +206,13 @@ function injectSidebarElements() {
     });
 
     if(matchedKeywords) {
+      matchedKeywords = [];
       console.log(matchedKeywords);
       let matchedKeywordsText = '';
       matchedKeywords.forEach(({ keyword, riskScore }) => {
         matchedKeywordsText += `${keyword} : ${riskScore}\n`;
       });
-      console.log(matchedKeywordsText);
-      matchedDiv.textContent = "yo " + matchedKeywordsText;
+      matchedDiv.textContent =" " + matchedKeywordsText;
     }
 
     //Call LangaugeTool API to check for spelling errors
@@ -284,20 +284,24 @@ function injectSidebarElements() {
         grammarDiv.innerHTML = grammarString;
 
         // #TODO handle comparisons with keywords
-        const keywordScore = 0;
+        const tempKeywordScore = 0;
         if(matchedKeywords) {
+          let keyWordLog = "<b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br> Keywords found: " + matchedKeywords.length + "<br><br>";
           console.log(matchedKeywords);
           let matchedKeywordsText = '';
           matchedKeywords.forEach(({ keyword, riskScore }) => {
-            matchedKeywordsText += `${keyword} : ${riskScore}\n`;
+            matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
           });
-          matchedDiv.textContent = matchedKeywordsText;
+          keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
+          emailBodyDiv.innerHTML = keyWordLog + spellingString + grammarString;
       }
         if (numTokens > 0) {
-          // #TODO incorporate spelling errors
-          const spellingScore = (spellingCount / numTokens) * 100;
-          // #TODO incorporate grammar errors
-          const grammarScore = (grammarCount / numTokens) * 100;
+          // Spelling errors
+          const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
+          // Grammar errors
+          const grammarScore = Math.min(((grammarCount / numTokens) * 300), 100);
+          /// Keyword matches
+          const keywordScore = Math.min(((tempKeywordScore / numTokens) * 100), 100);
           // Confidence score algorithm
           const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
           console.log(spellingCount);
@@ -330,7 +334,6 @@ function removeSidebarElements() {
   const sidebarDiv = document.getElementById('sidebarDiv');
   const scoreBodyDiv = document.getElementById('scoreBodyDiv');
   const matchedDiv = document.getElementById('matchedDiv');
-
   // Remove sidebar elements from the DOM if they exist
   if (sidebarButton) {
     sidebarButton.remove();
