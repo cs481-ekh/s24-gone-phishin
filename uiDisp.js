@@ -28,11 +28,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       removeSidebarElements();
     }
   } else if (message.keywords) {
-    receivedKWs = message.keywords;
+    receivedKWs = keywords;
     console.log('Received keywords from background:', keywords);
   }
 })
-
 // Function to inject sidebar elements
 function injectSidebarElements() {
   // Create the tab button
