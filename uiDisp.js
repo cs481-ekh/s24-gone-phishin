@@ -151,6 +151,8 @@ function injectSidebarElements() {
 
   // Function to tokenize email contents
   function tokenizeEmailContents(emailBody) {
+    //console.log("Here!");
+
     // Split email contents into tokens
     const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
 
@@ -191,7 +193,7 @@ function injectSidebarElements() {
     var numTokens = 0
 
     // Create a MutationObserver to watch for changes to the email body
-    const observer = new MutationObserver(() => {
+   // const observer = new MutationObserver(() => {
       // Select the email body element
       const emailBody = document.querySelector('.a3s.aiL');
 
@@ -207,13 +209,13 @@ function injectSidebarElements() {
           numTokens = tokens.length;
         }
       }
-    });
+    //});
 
     // Configure the observer to watch for changes to the email body subtree
-    observer.observe(document.body, {
-      subtree: true,
-      childList: true,
-    });
+    // observer.observe(document.body, {
+    //   subtree: true,
+    //   childList: true,
+    // });
 
     if (matchedKeywords) {
       matchedKeywords = [];
