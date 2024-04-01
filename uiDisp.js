@@ -28,10 +28,59 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       removeSidebarElements();
     }
   } else if (message.keywords) {
-    receivedKWs = message.keywords;
+    receivedKWs = keywords;
     console.log('Received keywords from background:', keywords);
   }
 })
+
+function makeApiRequest(params) {
+  fetch("https://api.languagetoolplus.com/v2/check", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "application/json"
+      },
+      body: params.toString() + "&language=en-US&enabledOnly=false"
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log("API Response:", data);
+      let matchesArray = data.matches; // Extracting the matches array
+      console.log("Matches:", matchesArray);
+      return matchesArray;
+    })
+}
+
+function splitTextIntoChunks(text, wordsPerChunk) {
+  // Split the text into words
+  const words = text.split(/\s+/);
+
+  // Initialize variables
+  let chunks = [];
+  let currentChunk = '';
+
+  // Iterate through the words
+  for (let i = 0; i < words.length; i++) {
+    // Add the current word to the current chunk
+    currentChunk += words[i] + ' ';
+
+    // Check if the current chunk reaches the desired word count or if it's the last word
+    if ((i + 1) % wordsPerChunk === 0 || i === words.length - 1) {
+      // Push the current chunk to the chunks array
+      chunks.push(currentChunk.trim());
+
+      // Reset the current chunk
+      currentChunk = '';
+    }
+  }
+
+  return chunks;
+}
 
 // Function to inject sidebar elements
 function injectSidebarElements() {
@@ -225,18 +274,26 @@ function injectSidebarElements() {
       matchedDiv.textContent = " " + matchedKeywordsText;
     }
 
-    //Call LangaugeTool API to check for spelling errors
-    const params = new URLSearchParams();
-    params.append("text", document.querySelector('.a3s.aiL').textContent);
-    console.log(params.toString()); //FIXME debug
-    fetch("https://api.languagetoolplus.com/v2/check", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json"
-      },
-      body: params.toString() + "&language=en-US&enabledOnly=false"
-    })
+    let spellingErrors = [];
+    let grammarErrors = [];
+    let apiPromises = [];
+    let spellingString = "";
+    let grammarString = "";
+    
+    const chunks = splitTextIntoChunks(document.querySelector('.a3s.aiL').textContent, 50);
+
+    chunks.forEach(chunk => {
+      const params = new URLSearchParams();
+      params.append("text", chunk);
+      console.log(params.toString()); //FIXME debug
+      const promise = fetch("https://api.languagetoolplus.com/v2/check", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "application/json"
+        },
+        body: params.toString() + "&language=en-US&enabledOnly=false"
+      })
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -245,104 +302,108 @@ function injectSidebarElements() {
       })
       .then(data => {
         console.log("API Response:", data);
-        const matchesArray = data.matches; // Extracting the matches array
-        console.log("Matches:", matchesArray);
-        let spellingErrors = [];
-        let grammarErrors = [];
-        matchesArray.forEach(error => {
+        const currMatches = data.matches; // Extracting the matches array
+        console.log("Matches:", currMatches);
+        currMatches.forEach(error => {
           if (error.shortMessage == "Spelling mistake") {
             spellingErrors.push(error)
+            console.log("spelling error: ", spellingErrors);
           }
           else {
             grammarErrors.push(error)
           }
         })
+      })
+      apiPromises.push(promise);
+    })
 
-        //Extract spelling info
+    Promise.all(apiPromises)
+      .then(() => {
         let spellingCount = spellingErrors ? spellingErrors.length : 0;
         spellingButton.innerHTML = "<b>Spelling Errors: " + spellingCount + "</b>";
-        let spellingString = "<br>Often a multitude of spelling errors can be a sign of phishing. Spelling factors into 25% of the phishing score.<br><br>";
+        spellingString = "<br>Often a multitude of spelling errors can be a sign of phishing. Spelling factors into 25% of the phishing score.<br><br>";
         spellingErrors.forEach(error => {
           spellingString += "Context: " + error.context.text + "<br><br>";
         })
-
-        spellingButton.addEventListener("click", function () {
-          if (spellingDiv.style.display === 'block') {
-            spellingDiv.style.display = 'none';
-          } else {
-            spellingDiv.style.display = 'block';
-          }
-        })
-
         //Extract grammar info
         let grammarCount = grammarErrors ? grammarErrors.length : 0;
         grammarButton.innerHTML = "<b>Grammar Errors: " + grammarCount + "</b>";
-        let grammarString = "<br>Often a multitude of grammar errors can be a sign of phishing. Grammar factors into 25% of the phishing score.<br><br>";
+        grammarString = "<br>Often a multitude of grammar errors can be a sign of phishing. Grammar factors into 25% of the phishing score.<br><br>";
         grammarErrors.forEach(error => {
           grammarString += "Error: " + error.message + "<br>";
           grammarString += "Context: " + error.context.text + "<br><br>";
         })
-
-        grammarButton.addEventListener("click", function () {
-          if (grammarDiv.style.display === 'block') {
-            grammarDiv.style.display = 'none';
-          } else {
-            grammarDiv.style.display = 'block';
-          }
-        });
-
-        spellingDiv.innerHTML = spellingString;
-        grammarDiv.innerHTML = grammarString;
-
-        matchedButton.addEventListener("click", function () {
-          if (matchedDiv.style.display === 'block') {
-            matchedDiv.style.display = 'none';
-          } else {
-            matchedDiv.style.display = 'block'
-          }
-        });
-
-        // #TODO handle comparisons with keywords
-        const tempKeywordScore = 0;
-        if (matchedKeywords) {
-          let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
-          console.log(matchedKeywords);
-          let matchedKeywordsText = '';
-          matchedKeywords.forEach(({ keyword, riskScore }) => {
-            matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
-          });
-          keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
-          matchedDiv.innerHTML = keyWordLog;
-          matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
-        }
-        if (numTokens > 0) {
-          console.log("bleh")
-          // Spelling errors
-          const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
-          // Grammar errors
-          const grammarScore = Math.min(((grammarCount / numTokens) * 300), 100);
-          /// Keyword matches
-          const keywordScore = Math.min(((tempKeywordScore / numTokens) * 100), 100);
-          // Confidence score algorithm
-          const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
-          console.log(spellingCount);
-          console.log(numTokens);
-          console.log(spellingScore);
-          //console.log(grammarScore);
-          const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
-          scoreBodyDiv.textContent = scoreString;
-          if (confidenceScore <= 25) {
-            scoreBodyDiv.style.backgroundColor = '#00ff00';
-          } else if (confidenceScore <= 50) {
-            scoreBodyDiv.style.backgroundColor = '#ffff00';
-          } else if (confidenceScore <= 75) {
-            scoreBodyDiv.style.backgroundColor = '#ff8800';
-          } else {
-            scoreBodyDiv.style.backgroundColor = '#ff0000';
-          }
-        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
       });
-  })
+
+    spellingButton.addEventListener("click", function () {
+      if (spellingDiv.style.display === 'block') {
+        spellingDiv.style.display = 'none';
+      } else {
+        spellingDiv.style.display = 'block';
+        spellingDiv.innerHTML = spellingString;
+      }
+    })
+
+    grammarButton.addEventListener("click", function () {
+      if (grammarDiv.style.display === 'block') {
+        grammarDiv.style.display = 'none';
+      } else {
+        grammarDiv.style.display = 'block';
+        grammarDiv.innerHTML = grammarString;
+      }
+    });
+
+    matchedButton.addEventListener("click", function () {
+      if (matchedDiv.style.display === 'block') {
+        matchedDiv.style.display = 'none';
+      } else {
+        matchedDiv.style.display = 'block'
+      }
+    });
+
+    // #TODO handle comparisons with keywords
+    const tempKeywordScore = 0;
+    if (matchedKeywords) {
+      let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
+      console.log(matchedKeywords);
+      let matchedKeywordsText = '';
+      matchedKeywords.forEach(({ keyword, riskScore }) => {
+        matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
+      });
+      keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
+      matchedDiv.innerHTML = keyWordLog;
+      matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
+    }
+    if (numTokens > 0) {
+      console.log("bleh")
+      // Spelling errors
+      const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
+      // Grammar errors
+      const grammarScore = Math.min(((grammarCount / numTokens) * 300), 100);
+      /// Keyword matches
+      const keywordScore = Math.min(((tempKeywordScore / numTokens) * 100), 100);
+      // Confidence score algorithm
+      const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
+      console.log(spellingCount);
+      console.log(numTokens);
+      console.log(spellingScore);
+      //console.log(grammarScore);
+      const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
+      scoreBodyDiv.textContent = scoreString;
+      if (confidenceScore <= 25) {
+        scoreBodyDiv.style.backgroundColor = '#00ff00';
+      } else if (confidenceScore <= 50) {
+        scoreBodyDiv.style.backgroundColor = '#ffff00';
+      } else if (confidenceScore <= 75) {
+        scoreBodyDiv.style.backgroundColor = '#ff8800';
+      } else {
+        scoreBodyDiv.style.backgroundColor = '#ff0000';
+      }
+    }
+  });
 }
 
 // Function to remove sidebar elements
