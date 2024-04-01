@@ -75,12 +75,18 @@ function injectSidebarElements() {
   analysisDiv.style.padding = '10px'; // Add padding for spacing
   analysisDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
 
+  const rescanButton = document.createElement('button');
+  rescanButton.textContent = "Rescan email";
+  rescanButton.style.marginBottom = '5px';
+  rescanButton.style.cursor = "pointer";
+
   const spellingButton = document.createElement('button');
   spellingButton.class = "collapsible";
   spellingButton.style.backgroundColor = "#ccc";
   spellingButton.style.color = "#222";
   spellingButton.style.cursor = "pointer";
   spellingButton.style.padding = "18px";
+  spellingButton.style.marginTop = '5px';
   spellingButton.style.width = '100%';
   spellingButton.style.border = 'none';
   spellingButton.style.textAlign = 'left';
@@ -97,6 +103,7 @@ function injectSidebarElements() {
   grammarButton.style.color = "#222";
   grammarButton.style.cursor = "pointer";
   grammarButton.style.padding = "18px";
+  grammarButton.style.marginTop = '5px';
   grammarButton.style.width = '100%';
   grammarButton.style.border = 'none';
   grammarButton.style.textAlign = 'left';
@@ -118,6 +125,7 @@ function injectSidebarElements() {
   matchedButton.style.color = "#222";
   matchedButton.style.cursor = "pointer";
   matchedButton.style.padding = "18px";
+  matchedButton.style.marginTop = '5px';
   matchedButton.style.width = '100%';
   matchedButton.style.border = 'none';
   matchedButton.style.textAlign = 'left';
@@ -136,6 +144,7 @@ function injectSidebarElements() {
   sidebarDiv.appendChild(analysisDiv);
 
   //TEST CODE
+  analysisDiv.appendChild(rescanButton);
   analysisDiv.appendChild(spellingButton);
   analysisDiv.appendChild(spellingDiv);
   analysisDiv.appendChild(grammarButton);
