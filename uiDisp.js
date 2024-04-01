@@ -279,6 +279,8 @@ function injectSidebarElements() {
     let apiPromises = [];
     let spellingString = "";
     let grammarString = "";
+    let spellingCount = 0;
+    let grammarCount = 0;
     
     const chunks = splitTextIntoChunks(document.querySelector('.a3s.aiL').textContent, 50);
 
@@ -307,7 +309,6 @@ function injectSidebarElements() {
         currMatches.forEach(error => {
           if (error.shortMessage == "Spelling mistake") {
             spellingErrors.push(error)
-            console.log("spelling error: ", spellingErrors);
           }
           else {
             grammarErrors.push(error)
@@ -319,14 +320,14 @@ function injectSidebarElements() {
 
     Promise.all(apiPromises)
       .then(() => {
-        let spellingCount = spellingErrors ? spellingErrors.length : 0;
+        spellingCount = spellingErrors ? spellingErrors.length : 0;
         spellingButton.innerHTML = "<b>Spelling Errors: " + spellingCount + "</b>";
         spellingString = "<br>Often a multitude of spelling errors can be a sign of phishing. Spelling factors into 25% of the phishing score.<br><br>";
         spellingErrors.forEach(error => {
           spellingString += "Context: " + error.context.text + "<br><br>";
         })
         //Extract grammar info
-        let grammarCount = grammarErrors ? grammarErrors.length : 0;
+        grammarCount = grammarErrors ? grammarErrors.length : 0;
         grammarButton.innerHTML = "<b>Grammar Errors: " + grammarCount + "</b>";
         grammarString = "<br>Often a multitude of grammar errors can be a sign of phishing. Grammar factors into 25% of the phishing score.<br><br>";
         grammarErrors.forEach(error => {
