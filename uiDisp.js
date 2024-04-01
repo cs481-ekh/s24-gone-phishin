@@ -29,6 +29,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
   } else if (message.keywords) {
     receivedKWs = keywords;
+    receivedKWs = keywords;
     console.log('Received keywords from background:', keywords);
   }
 })
