@@ -29,7 +29,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
   } else if (message.keywords) {
     receivedKWs = keywords;
-    receivedKWs = keywords;
     console.log('Received keywords from background:', keywords);
   }
 })
@@ -58,12 +57,15 @@ function makeApiRequest(params) {
 }
 
 function splitTextIntoChunks(text, wordsPerChunk) {
-  // Split the text into words
-  const words = text.split(/\s+/);
-
   // Initialize variables
   let chunks = [];
   let currentChunk = '';
+
+  if(text === null) {
+    return chunks;
+  }
+  // Split the text into words
+  const words = text.split(/\s+/);
 
   // Iterate through the words
   for (let i = 0; i < words.length; i++) {
@@ -327,6 +329,7 @@ function injectSidebarElements() {
         spellingErrors.forEach(error => {
           spellingString += "Context: " + error.context.text + "<br><br>";
         })
+
         //Extract grammar info
         grammarCount = grammarErrors ? grammarErrors.length : 0;
         grammarButton.innerHTML = "<b>Grammar Errors: " + grammarCount + "</b>";
@@ -335,6 +338,46 @@ function injectSidebarElements() {
           grammarString += "Error: " + error.message + "<br>";
           grammarString += "Context: " + error.context.text + "<br><br>";
         })
+
+        //keywords I guess
+        const tempKeywordScore = 0;
+        if (matchedKeywords) {
+          let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
+          console.log(matchedKeywords);
+          let matchedKeywordsText = '';
+          matchedKeywords.forEach(({ keyword, riskScore }) => {
+            matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
+          });
+          keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
+          matchedDiv.innerHTML = keyWordLog;
+          matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
+        }
+        if (numTokens > 0) {
+          console.log("bleh")
+          // Spelling errors
+          const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
+          // Grammar errors
+          const grammarScore = Math.min(((grammarCount / numTokens) * 300), 100);
+          /// Keyword matches
+          const keywordScore = Math.min(((tempKeywordScore / numTokens) * 100), 100);
+          // Confidence score algorithm
+          const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
+          console.log(spellingCount);
+          console.log(numTokens);
+          console.log(spellingScore);
+          //console.log(grammarScore);
+          const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
+          scoreBodyDiv.textContent = scoreString;
+          if (confidenceScore <= 25) {
+            scoreBodyDiv.style.backgroundColor = '#00ff00';
+          } else if (confidenceScore <= 50) {
+            scoreBodyDiv.style.backgroundColor = '#ffff00';
+          } else if (confidenceScore <= 75) {
+            scoreBodyDiv.style.backgroundColor = '#ff8800';
+          } else {
+            scoreBodyDiv.style.backgroundColor = '#ff0000';
+          }
+        }
       })
       .catch(error => {
         console.error('Error:', error);
@@ -367,44 +410,44 @@ function injectSidebarElements() {
     });
 
     // #TODO handle comparisons with keywords
-    const tempKeywordScore = 0;
-    if (matchedKeywords) {
-      let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
-      console.log(matchedKeywords);
-      let matchedKeywordsText = '';
-      matchedKeywords.forEach(({ keyword, riskScore }) => {
-        matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
-      });
-      keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
-      matchedDiv.innerHTML = keyWordLog;
-      matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
-    }
-    if (numTokens > 0) {
-      console.log("bleh")
-      // Spelling errors
-      const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
-      // Grammar errors
-      const grammarScore = Math.min(((grammarCount / numTokens) * 300), 100);
-      /// Keyword matches
-      const keywordScore = Math.min(((tempKeywordScore / numTokens) * 100), 100);
-      // Confidence score algorithm
-      const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
-      console.log(spellingCount);
-      console.log(numTokens);
-      console.log(spellingScore);
-      //console.log(grammarScore);
-      const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
-      scoreBodyDiv.textContent = scoreString;
-      if (confidenceScore <= 25) {
-        scoreBodyDiv.style.backgroundColor = '#00ff00';
-      } else if (confidenceScore <= 50) {
-        scoreBodyDiv.style.backgroundColor = '#ffff00';
-      } else if (confidenceScore <= 75) {
-        scoreBodyDiv.style.backgroundColor = '#ff8800';
-      } else {
-        scoreBodyDiv.style.backgroundColor = '#ff0000';
-      }
-    }
+    // const tempKeywordScore = 0;
+    // if (matchedKeywords) {
+    //   let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
+    //   console.log(matchedKeywords);
+    //   let matchedKeywordsText = '';
+    //   matchedKeywords.forEach(({ keyword, riskScore }) => {
+    //     matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
+    //   });
+    //   keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
+    //   matchedDiv.innerHTML = keyWordLog;
+    //   matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
+    // }
+    // if (numTokens > 0) {
+    //   console.log("bleh")
+    //   // Spelling errors
+    //   const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
+    //   // Grammar errors
+    //   const grammarScore = Math.min(((grammarCount / numTokens) * 300), 100);
+    //   /// Keyword matches
+    //   const keywordScore = Math.min(((tempKeywordScore / numTokens) * 100), 100);
+    //   // Confidence score algorithm
+    //   const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
+    //   console.log(spellingCount);
+    //   console.log(numTokens);
+    //   console.log(spellingScore);
+    //   //console.log(grammarScore);
+    //   const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
+    //   scoreBodyDiv.textContent = scoreString;
+    //   if (confidenceScore <= 25) {
+    //     scoreBodyDiv.style.backgroundColor = '#00ff00';
+    //   } else if (confidenceScore <= 50) {
+    //     scoreBodyDiv.style.backgroundColor = '#ffff00';
+    //   } else if (confidenceScore <= 75) {
+    //     scoreBodyDiv.style.backgroundColor = '#ff8800';
+    //   } else {
+    //     scoreBodyDiv.style.backgroundColor = '#ff0000';
+    //   }
+    // }
   });
 }
 
