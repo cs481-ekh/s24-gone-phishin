@@ -32,7 +32,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     console.log('Received keywords from background:', keywords);
   }
 })
-
 // Function to inject sidebar elements
 function injectSidebarElements() {
   // Create the tab button
@@ -151,6 +150,8 @@ function injectSidebarElements() {
 
   // Function to tokenize email contents
   function tokenizeEmailContents(emailBody) {
+    //console.log("Here!");
+
     // Split email contents into tokens
     const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
 
@@ -191,7 +192,7 @@ function injectSidebarElements() {
     var numTokens = 0
 
     // Create a MutationObserver to watch for changes to the email body
-    const observer = new MutationObserver(() => {
+   // const observer = new MutationObserver(() => {
       // Select the email body element
       const emailBody = document.querySelector('.a3s.aiL');
 
@@ -207,13 +208,13 @@ function injectSidebarElements() {
           numTokens = tokens.length;
         }
       }
-    });
+    //});
 
     // Configure the observer to watch for changes to the email body subtree
-    observer.observe(document.body, {
-      subtree: true,
-      childList: true,
-    });
+    // observer.observe(document.body, {
+    //   subtree: true,
+    //   childList: true,
+    // });
 
     if (matchedKeywords) {
       matchedKeywords = [];
@@ -302,32 +303,34 @@ function injectSidebarElements() {
           }
         });
 
-        // #TODO handle comparisons with keywords
-        const tempKeywordScore = 0;
+        // handle comparisons with keywords
+        var totalRiskScore = 0;
         if (matchedKeywords) {
           let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
           let matchedKeywordsText = '';
+
           matchedKeywords.forEach(({ keyword, riskScore, description }) => {
+            totalRiskScore = totalRiskScore + riskScore;
             matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
+            
           });
           keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
           matchedDiv.innerHTML = keyWordLog;
           matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
         }
         if (numTokens > 0) {
-          console.log("bleh")
           // Spelling errors
           const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
           // Grammar errors
           const grammarScore = Math.min(((grammarCount / numTokens) * 300), 100);
           /// Keyword matches
-          const keywordScore = Math.min(((tempKeywordScore / numTokens) * 100), 100);
+          const keywordScore = Math.min(((totalRiskScore / numTokens) * 100), 100);
           // Confidence score algorithm
           const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
-          console.log(spellingCount);
-          console.log(numTokens);
-          console.log(spellingScore);
-          //console.log(grammarScore);
+          //console.log(numTokens);
+          //console.log(spellingScore);
+          //console.log(grammarScore)
+          //console.log(totalRiskScore);
           const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
           scoreBodyDiv.textContent = scoreString;
           if (confidenceScore <= 25) {
