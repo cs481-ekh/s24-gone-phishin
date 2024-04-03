@@ -163,7 +163,7 @@ function injectSidebarElements() {
       receivedKWs.forEach(keyword => {
         const lowercaseKeyword = keyword.keyword.toLowerCase();
         if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword.toLowerCase() === lowercaseKeyword)) {
-          matchedKeywords.push({ keyword: keyword.keyword, riskScore: keyword.riskScore });
+          matchedKeywords.push({ keyword: keyword.keyword, riskScore: keyword.riskScore, description: keyword.description });
         }
       });
     });
@@ -307,11 +307,12 @@ function injectSidebarElements() {
         var totalRiskScore = 0;
         if (matchedKeywords) {
           let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
-          console.log(matchedKeywords);
           let matchedKeywordsText = '';
-          matchedKeywords.forEach(({ keyword, riskScore }) => {
+
+          matchedKeywords.forEach(({ keyword, riskScore, description }) => {
             totalRiskScore = totalRiskScore + riskScore;
-            matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
+            matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
+            
           });
           keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
           matchedDiv.innerHTML = keyWordLog;
