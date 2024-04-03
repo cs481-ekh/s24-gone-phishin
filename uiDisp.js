@@ -1,5 +1,7 @@
 // Displays interface, credit to ChatGPT
 let receivedKWs;
+let matchedKeywords = [];
+
 //Set starting state
 chrome.storage.sync.get('enabled', function (result) {
   if (result.enabled) {
@@ -32,29 +34,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     console.log('Received keywords from background:', keywords);
   }
 })
-
-function makeApiRequest(params) {
-  fetch("https://api.languagetoolplus.com/v2/check", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json"
-      },
-      body: params.toString() + "&language=en-US&enabledOnly=false"
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log("API Response:", data);
-      let matchesArray = data.matches; // Extracting the matches array
-      console.log("Matches:", matchesArray);
-      return matchesArray;
-    })
-}
 
 function splitTextIntoChunks(text, wordsPerChunk) {
   // Initialize variables
@@ -199,13 +178,10 @@ function injectSidebarElements() {
   // Append the tab to the document body
   document.body.appendChild(tab);
 
-  let matchedKeywords = [];
-
   // Function to tokenize email contents
   function tokenizeEmailContents(emailBody) {
-    //console.log("Here!");
-
     // Split email contents into tokens
+    matchedKeywords = [];
     const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
 
     // Remove unneccessary tokens
@@ -244,10 +220,11 @@ function injectSidebarElements() {
     var tokens = null;
     var numTokens = 0
 
+    const emailBody = document.querySelector('.a3s.aiL');
     // Create a MutationObserver to watch for changes to the email body
-   // const observer = new MutationObserver(() => {
+    //const observer = new MutationObserver(() => {
       // Select the email body element
-      const emailBody = document.querySelector('.a3s.aiL');
+      // const emailBody = document.querySelector('.a3s.aiL');
 
       // Check if the email body is present and contains text
       if (emailBody && emailBody.textContent) {
@@ -269,15 +246,14 @@ function injectSidebarElements() {
     //   childList: true,
     // });
 
-    if (matchedKeywords) {
-      matchedKeywords = [];
-      console.log(matchedKeywords);
-      let matchedKeywordsText = '';
-      matchedKeywords.forEach(({ keyword, riskScore }) => {
-        matchedKeywordsText += `${keyword} : ${riskScore}\n`;
-      });
-      matchedDiv.textContent = " " + matchedKeywordsText;
-    }
+    // if (matchedKeywords) {
+    //   matchedKeywords = [];
+    //   let matchedKeywordsText = '';
+    //   matchedKeywords.forEach(({ keyword, riskScore, description }) => {
+    //     matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
+    //   });
+    //   matchedDiv.textContent = " " + matchedKeywordsText;
+    // }
 
     let spellingErrors = [];
     let grammarErrors = [];
@@ -287,7 +263,10 @@ function injectSidebarElements() {
     let spellingCount = 0;
     let grammarCount = 0;
     
-    const chunks = splitTextIntoChunks(document.querySelector('.a3s.aiL').textContent, 50);
+    let chunks = [];
+    if (emailBody && emailBody.textContent) {
+      chunks = splitTextIntoChunks(document.querySelector('.a3s.aiL').textContent, 50);
+    }
 
     chunks.forEach(chunk => {
       const params = new URLSearchParams();
@@ -325,6 +304,7 @@ function injectSidebarElements() {
 
     Promise.all(apiPromises)
       .then(() => {
+        //extract spelling info
         spellingCount = spellingErrors ? spellingErrors.length : 0;
         spellingButton.innerHTML = "<b>Spelling Errors: " + spellingCount + "</b>";
         spellingString = "<br>Often a multitude of spelling errors can be a sign of phishing. Spelling factors into 25% of the phishing score.<br><br>";
@@ -342,20 +322,19 @@ function injectSidebarElements() {
         })
 
         //keywords I guess
-        const tempKeywordScore = 0;
-        if (matchedKeywords) {
+        var totalRiskScore = 0;
+        // if (matchedKeywords) {
           let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
+          console.log(matchedKeywords);
           let matchedKeywordsText = '';
-
           matchedKeywords.forEach(({ keyword, riskScore, description }) => {
             totalRiskScore = totalRiskScore + riskScore;
             matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
-            
           });
           keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
           matchedDiv.innerHTML = keyWordLog;
           matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
-        }
+        // }
         if (numTokens > 0) {
           // Spelling errors
           const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
@@ -365,10 +344,11 @@ function injectSidebarElements() {
           const keywordScore = Math.min(((totalRiskScore / numTokens) * 100), 100);
           // Confidence score algorithm
           const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
-          //console.log(numTokens);
-          //console.log(spellingScore);
-          //console.log(grammarScore)
-          //console.log(totalRiskScore);
+          // console.log(spellingCount);
+          // console.log(numTokens);
+          // console.log(spellingScore);
+          // console.log(totalRiskScore);
+          //console.log(grammarScore);
           const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
           scoreBodyDiv.textContent = scoreString;
           if (confidenceScore <= 25) {
