@@ -2,57 +2,57 @@ Keywords are weighted on a scale of 1 - 10
 10 represents the highest likelihood of a keyword being indicitive of phishing while 1 represents the lowest likelihood.
 The weight of keywords effect the keyword score. This keyword score makes up 50% of the overall confidence score.
 
-invoice: 4
-new: 2
-message: 3
-file: 4
-request: 5
-action: 5
-verification: 6
-efax: 7
-voicemail: 6
-label: 3
-post: 2
-document: 5
-postal: 4
-calculations: 6
-copy: 3
-fedex: 6
-statement: 6
-financial: 7
-dhl: 5
-usps: 5
-notification: 4
-n: 1
-irs: 5
-delivery: 4
-ticket: 3
-free: 3
-now: 1
-click: 3
-urgent: 7
-winner: 4
-winning: 3
-congratulations: 3
-password: 9
-passwords: 9
-username: 8
-usernames: 8
-SSN: 10
-inv: 4
-required: 3
-8: 1
-shipment: 4
-ups: 4
-express: 4
-alert: 5
-confirmation: 5
-report: 3
-idnotification: 4
-tax: 5
-taxes: 5
-download: 6
-link: 5
+invoice: 4 : Phishing emails often impersonate legitimate companies or institutions, pretending to send invoices to trick recipients into clicking on malicious links or attachments.
+new: 2 : Phishers may use "new" as a way to make readers feel as though whatever is being offered is something fresh or important, leading them to make too quick of a decision. However, context is important with this word, as it may be appropriate.
+message: 3 : Phishing emails may use this word to make the recipients feel as though possibly someone is trying to send them somthing important, encouraging them to interact with anything the email contains.
+file: 4 : Phishers often use files as a way to deliver malware as an attempt to infect a users system or steal sensitive information. If you are not expecting such a file or if you do not know the sender, it is generally advised that you report such emails.
+request: 5 : Similar to action. Phishing emails often use this word to encourage recipients to act on something like clicking a link or responding. 
+action: 5 : Similar to request. Phishing emails often use this word to encourage recipients to act on something like clicking a link or responding.
+verification: 6 : Things that are used to verify who you are, like passwords or SSNs, are often too sensitive to be sent over email. If an email is asking for some form of verification, it could be indicative of a phishing attempt.
+efax: 7 : Phishers may impersonate eFax services to trick recipients into clicking on links or downloading attachments, potentially leading to malware infection or access to sensitive information.
+voicemail: 6 : Phishing emails may claim to contain voicemail notifications, enticing recipients to click on links or download attachments, which could contain malware.
+label: 3 : Phishers may use this term to imply that there's something important or official enclosed, leading recipients to click on malicious links, download harmful attachments or simply attampt to make the recipient believe in its authenticity.
+post: 2 : Phishing emails may contain this word to imply the existence of something important or official in an attempt to gain trust. Similar to Postal.
+document: 5 : There are two potential reasons why a phishing email may bring up documents. One way is if they are sending you an attachment in the guise of a document that may be a harmful attachment. The other way is to get document from the recipient that hold sensitive information.
+postal: 4 : Phishing emails may contain this word to imply the existence of something important or official in an attempt to gain trust. Similar to Post.
+calculations: 6 : Phishers may use this term to suggest financial or important documents, encouraging recipients to click on links or download attachments that could contain malware or steal sensitive information.
+copy: 3 : Phishers may use this term to imply that there's a copy of an important document or communication enclosed or they are requesting a copy of a document containing sensitive information. Context is important to consider when concerning access to copies.
+fedex: 6 : It is very common for phishers to impersonate FedEx to gain information on peoples' address or to steal financial information. Zip codes are especially a useful thing to know for scammers to know as they are typically associated with debit or credit cards.
+statement: 6 : Phishers may attempt to use this word to imply the presence or need of important financial statements or communications. If you are not expecting to receive or send any of these sort of documents, there is a high chance that it may be an attempt to learn financial information about you ar your place of work.
+financial: 7 : Financial information is typically information that you should keep private. Do not send financial information or documents over email without prior authorization if it pertains to your place of work.
+dhl: 5 : Phishers may attempt to use a false tracking number to incite the recipient to act according to how the phisher wants them to. If you are expecting a package, always refer to the official shipping company you are expecting the package from.
+usps: 5 : It is very common for phishers to impersonate USPS to gain information on peoples' address or to steal financial information. Zip codes are especially a useful thing to know for scammers to know as they are typically associated with debit or credit cards.
+notification: 4 : Phishing emails may claim to contain important notifications or alerts, enticing recipients to click on links or download attachments that could contain malware.
+n: 1 : It may be a spelling error or possibly a fingerprint. It could also represent an amount of something.
+irs: 5 : It is common for Phishers to impersonate the IRS to gain sensitive financial information about the recipient or their place of work. Since taxes can be a stressful thing for individuals it may incite recipients to act swiftly without verifying the authenticity of the email. Always refer to the official IRS site or an IRS worker for tax information.
+delivery: 4 : Many people order packages for delivery and many phishers use the false pretenses of some package needing an address to be sent or some other complication. Always refer to the official shipping company you ordered your delivery from.
+ticket: 3 :  Phishing emails might claim to contain tickets or confirmations for events or flights, enticing recipients to click on malicious links or download attachments. The recipient may also feel compelled to enter information inside these links without verifying the sites authenticity. Flight complications can be stressful but always refer to the official flight company your flight is being handled through.
+free: 3 : Phishers will use the idea of free stuff to entice the recipients of their emails to interact with the email. 
+now: 1 : While now can be used in many normal conversations, a phisher may use it to make the recipient feel a sense of urgency. 
+click: 3 : Phishers may use this word to encourage interaction with the email. 
+urgent: 7 : Phishers use this word to imply a strong sense of urgency for some sort of response from the recipient. This urgency may make recipients feel compelled to respond without considering the authenticity of the email.
+winner: 4 : Phishers will use this word to justify giving the recipient free money or stuff. The hope of the phisher is that this causes the recipient to engage with the email, in order to have them share sensitive information.
+winning: 3 : Phishers will use this word to justify giving the recipient free money or stuff. The hope of the phisher is that this causes the recipient to engage with the email, in order to have them share sensitive information.
+congratulations: 3 : Often paired with winning, won or win. Phishers will use this word to justify giving the recipient free money or stuff. The hope of the phisher is that this causes the recipient to engage with the email, in order to have them share sensitive information.
+password: 9 : You should never share your password with anyone. Any individual posing as someone who may require the password, like I.T, does not require your password to help you. IF you are working in an office environment and someone asks to work under your account, advise them to recover their account information and that you will not share yours.
+passwords: 9 : You should never share your password with anyone. Any individual posing as someone who may require the password, like I.T, does not require your password to help you. IF you are working in an office environment and someone asks to work under your account, advise them to recover their account information and that you will not share yours.
+username: 8 : Often times you do not need to share your username with others. In a case where you may have to, like password recovery, it is advised that you ensure the authenticity of the site or individual you are sharing the username with.
+usernames: 8 : Often times you do not need to share your username with others. In a case where you may have to, like password recovery, it is advised that you ensure the authenticity of the site or individual you are sharing the username with.
+SSN: 10 : Never share your social security number with anyone over email.
+inv: 4 : Short for invoice. Phishing emails often impersonate legitimate companies or institutions, pretending to send invoices to trick recipients into clicking on malicious links or attachments.
+required: 3 : Phishers may use this term to imply that action is necessary, encouraging recipients to click on links or download attachments that could lead to compromise or data theft.
+8: 1 : It may be a spelling error or possibly a fingerprint. This has been reported to be commonly found on phishing emails.
+shipment: 4 : Many people order packages for delivery and many phishers use the false pretenses of some package needing an address to be sent or some other complication. Always refer to the official shipping company you ordered your delivery from.
+ups: 4 : Phishers may impersonate shipping companies like UPS, claiming to contain package tracking information or delivery updates, enticing recipients to share their address or other personal information.
+express: 4 : Implies the existence of some item that is ready to be shipped and in a convenient manner. It is advised that you verify the authenticity of the email before acting as the email requests.
+alert: 5 : Phishing emails may claim to contain important alerts or confirmations, encouraging recipients to click on links or download attachments that could contain malware.
+confirmation: 5 : Phishing emails may claim to contain important alerts or confirmations, encouraging recipients to click on links or download attachments that could contain malware.
+report: 3 : Phishing emails may claim to contain important reports or documents, enticing recipients to click on links or download attachments that could contain malware or steal sensitive information.
+idnotification: 4 : Phishers may use this term to imply that there's important identity notification enclosed, leading recipients to click on malicious links or download harmful attachments.
+tax: 5 : Phishers may impersonate tax authorities, claiming to contain important tax documents or communications, leading recipients to click on malicious links or download attachments.
+taxes: 5 : Phishers may impersonate tax authorities, claiming to contain important tax documents or communications, leading recipients to click on malicious links or download attachments.
+download: 6 : Phishing emails often instruct recipients to download attachments or click on links, potentially leading to malware infections or data theft.
+link: 5 : Phishing emails often instruct recipients to download attachments or click on links, potentially leading to malware infections or data theft.
 
 Sources:
 https://hubwisetech.com/the-most-commonly-used-email-keywords-to-look-for-to-avoid-phishing-scams/
