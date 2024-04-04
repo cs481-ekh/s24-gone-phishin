@@ -40,7 +40,7 @@ function splitTextIntoChunks(text, wordsPerChunk) {
   let chunks = [];
   let currentChunk = '';
 
-  if(text === null) {
+  if (text === null) {
     return chunks;
   }
   // Split the text into words
@@ -107,12 +107,18 @@ function injectSidebarElements() {
   analysisDiv.style.padding = '10px'; // Add padding for spacing
   analysisDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
 
+  const rescanButton = document.createElement('button');
+  rescanButton.textContent = "Rescan email";
+  rescanButton.style.marginBottom = '5px';
+  rescanButton.style.cursor = "pointer";
+
   const spellingButton = document.createElement('button');
   spellingButton.class = "collapsible";
   spellingButton.style.backgroundColor = "#ccc";
   spellingButton.style.color = "#222";
   spellingButton.style.cursor = "pointer";
   spellingButton.style.padding = "18px";
+  spellingButton.style.marginTop = '5px';
   spellingButton.style.width = '100%';
   spellingButton.style.border = 'none';
   spellingButton.style.textAlign = 'left';
@@ -129,6 +135,7 @@ function injectSidebarElements() {
   grammarButton.style.color = "#222";
   grammarButton.style.cursor = "pointer";
   grammarButton.style.padding = "18px";
+  grammarButton.style.marginTop = '5px';
   grammarButton.style.width = '100%';
   grammarButton.style.border = 'none';
   grammarButton.style.textAlign = 'left';
@@ -150,6 +157,7 @@ function injectSidebarElements() {
   matchedButton.style.color = "#222";
   matchedButton.style.cursor = "pointer";
   matchedButton.style.padding = "18px";
+  matchedButton.style.marginTop = '5px';
   matchedButton.style.width = '100%';
   matchedButton.style.border = 'none';
   matchedButton.style.textAlign = 'left';
@@ -168,6 +176,7 @@ function injectSidebarElements() {
   sidebarDiv.appendChild(analysisDiv);
 
   //TEST CODE
+  analysisDiv.appendChild(rescanButton);
   analysisDiv.appendChild(spellingButton);
   analysisDiv.appendChild(spellingDiv);
   analysisDiv.appendChild(grammarButton);
@@ -216,28 +225,33 @@ function injectSidebarElements() {
 
     // Move the tab button
     tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
+    loadAnalysis()
+  });
+  rescanButton.addEventListener('click', loadAnalysis);
 
+  function loadAnalysis() {
+    console.log("Scanning email");
     var tokens = null;
-    var numTokens = 0
+    var numTokens = 0;
 
     const emailBody = document.querySelector('.a3s.aiL');
     // Create a MutationObserver to watch for changes to the email body
     //const observer = new MutationObserver(() => {
-      // Select the email body element
-      // const emailBody = document.querySelector('.a3s.aiL');
+    // Select the email body element
+    // const emailBody = document.querySelector('.a3s.aiL');
 
-      // Check if the email body is present and contains text
-      if (emailBody && emailBody.textContent) {
-        // Tokenize the email contents
-        tokens = tokenizeEmailContents(emailBody.textContent);
+    // Check if the email body is present and contains text
+    if (emailBody && emailBody.textContent) {
+      // Tokenize the email contents
+      tokens = tokenizeEmailContents(emailBody.textContent);
 
-        if (tokens.length > 0) {
-          // Display the tokens in the sidebar
-          // analysisDiv.textContent = tokens.join(' || ');
-          // Update numTokens
-          numTokens = tokens.length;
-        }
+      if (tokens.length > 0) {
+        // Display the tokens in the sidebar
+        // analysisDiv.textContent = tokens.join(' || ');
+        // Update numTokens
+        numTokens = tokens.length;
       }
+    }
     //});
 
     // Configure the observer to watch for changes to the email body subtree
@@ -262,7 +276,7 @@ function injectSidebarElements() {
     let grammarString = "";
     let spellingCount = 0;
     let grammarCount = 0;
-    
+
     let chunks = [];
     if (emailBody && emailBody.textContent) {
       chunks = splitTextIntoChunks(document.querySelector('.a3s.aiL').textContent, 50);
@@ -280,25 +294,25 @@ function injectSidebarElements() {
         },
         body: params.toString() + "&language=en-US&enabledOnly=false"
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log("API Response:", data);
-        const currMatches = data.matches; // Extracting the matches array
-        console.log("Matches:", currMatches);
-        currMatches.forEach(error => {
-          if (error.shortMessage == "Spelling mistake") {
-            spellingErrors.push(error)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
           }
-          else {
-            grammarErrors.push(error)
-          }
+          return response.json();
         })
-      })
+        .then(data => {
+          console.log("API Response:", data);
+          const currMatches = data.matches; // Extracting the matches array
+          console.log("Matches:", currMatches);
+          currMatches.forEach(error => {
+            if (error.shortMessage == "Spelling mistake") {
+              spellingErrors.push(error)
+            }
+            else {
+              grammarErrors.push(error)
+            }
+          })
+        })
       apiPromises.push(promise);
     })
 
@@ -324,16 +338,16 @@ function injectSidebarElements() {
         //keywords I guess
         var totalRiskScore = 0;
         // if (matchedKeywords) {
-          let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
-          console.log(matchedKeywords);
-          let matchedKeywordsText = '';
-          matchedKeywords.forEach(({ keyword, riskScore, description }) => {
-            totalRiskScore = totalRiskScore + riskScore;
-            matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
-          });
-          keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
-          matchedDiv.innerHTML = keyWordLog;
-          matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
+        let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
+        console.log(matchedKeywords);
+        let matchedKeywordsText = '';
+        matchedKeywords.forEach(({ keyword, riskScore, description }) => {
+          totalRiskScore = totalRiskScore + riskScore;
+          matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
+        });
+        keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
+        matchedDiv.innerHTML = keyWordLog;
+        matchedButton.innerHTML = "<b>Keywords found: " + matchedKeywords.length + "</b>";
         // }
         if (numTokens > 0) {
           // Spelling errors
@@ -431,7 +445,7 @@ function injectSidebarElements() {
     //     scoreBodyDiv.style.backgroundColor = '#ff0000';
     //   }
     // }
-  });
+  }
 }
 
 // Function to remove sidebar elements
