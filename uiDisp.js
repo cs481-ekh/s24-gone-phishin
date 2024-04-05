@@ -188,10 +188,10 @@ function injectSidebarElements() {
   document.body.appendChild(tab);
 
   // Function to tokenize email contents
-  function tokenizeEmailContents(emailBody) {
+  function tokenizeEmailContents(emailContent) {
     // Split email contents into tokens
     matchedKeywords = [];
-    const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
+    const tokens = emailContent.split(/\s+|[^\w\s'/%]+/);
 
     // Remove unneccessary tokens
     const filteredTokens = tokens.filter(token => token !== '' && token !== '‌');
@@ -234,21 +234,27 @@ function injectSidebarElements() {
     var tokens = null;
     var numTokens = 0;
 
-    const emailBody = document.querySelector('.a3s.aiL');
+    // Grab the email body, subject, and sender
+    const emailBody    = document.querySelector('.a3s.aiL').textContent;
+    const emailSubject = document.querySelector('h2.hP').textContent;
+    const emailSender  = document.querySelector('span.go').textContent;
+    var emailContent = null;
+
     // Create a MutationObserver to watch for changes to the email body
     //const observer = new MutationObserver(() => {
     // Select the email body element
     // const emailBody = document.querySelector('.a3s.aiL');
 
-    // Check if the email body is present and contains text
-    if (emailBody && emailBody.textContent) {
+    // Check if the email body is present and contains textS
+    if (emailBody && emailSubject) {
+      // Concat each of the email segments
+      emailContent = emailBody.concat(" " + emailSubject);
+      //console.log('DEBUG: ' + emailContent);
+
       // Tokenize the email contents
-      tokens = tokenizeEmailContents(emailBody.textContent);
+      tokens = tokenizeEmailContents(emailContent);
 
       if (tokens.length > 0) {
-        // Display the tokens in the sidebar
-        // analysisDiv.textContent = tokens.join(' || ');
-        // Update numTokens
         numTokens = tokens.length;
       }
     }
@@ -278,8 +284,8 @@ function injectSidebarElements() {
     let grammarCount = 0;
 
     let chunks = [];
-    if (emailBody && emailBody.textContent) {
-      chunks = splitTextIntoChunks(document.querySelector('.a3s.aiL').textContent, 50);
+    if (emailContent) {
+      chunks = splitTextIntoChunks(emailContent, 50);
     }
 
     chunks.forEach(chunk => {
