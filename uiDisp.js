@@ -261,6 +261,17 @@ function injectSidebarElements() {
 
       // Check if the email body is present and contains text
       if (emailBody && emailBody.textContent) {
+        //attachments????
+        // Select all elements with the class "aZo"
+        var attachments = document.querySelectorAll('.aZo');
+
+        // Get the count of attachments
+        var numberOfAttachments = attachments.length;
+
+        // Log or use the count as needed
+        console.log('Number of attachments:', numberOfAttachments);
+
+
         //parse for hyperlinks
         hyperlinks = [];
         const parser = new DOMParser();
