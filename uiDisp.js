@@ -220,24 +220,25 @@ function injectSidebarElements() {
     var tokens = null;
     var numTokens = 0
 
-    const emailBody = document.querySelector('.a3s.aiL');
-    // Create a MutationObserver to watch for changes to the email body
-    //const observer = new MutationObserver(() => {
-      // Select the email body element
-      // const emailBody = document.querySelector('.a3s.aiL');
+    const emailBodies = document.querySelectorAll('.a3s.aiL');
+    var lastEmailBody;
+// Check if there are any email bodies found
+if (emailBodies.length > 0) {
+    // Get the last email body by accessing the last element in the NodeList
+    const EmailBody = emailBodies[emailBodies.length - 1];
+    lastEmailBody = EmailBody.querySelector('.a3s.aiL > :not(.HOEnZb.adl)')
+    console.log(lastEmailBody);
+    // Check if the last email body is present and contains text
+    if (lastEmailBody && lastEmailBody.textContent) {
+        // Tokenize the content of the last email
+        tokens = tokenizeEmailContents(lastEmailBody.textContent);
 
-      // Check if the email body is present and contains text
-      if (emailBody && emailBody.textContent) {
-        // Tokenize the email contents
-        tokens = tokenizeEmailContents(emailBody.textContent);
-
+        // Update numTokens if there are tokens found
         if (tokens.length > 0) {
-          // Display the tokens in the sidebar
-          // analysisDiv.textContent = tokens.join(' || ');
-          // Update numTokens
-          numTokens = tokens.length;
+            numTokens = tokens.length;
         }
-      }
+    }
+}
     //});
 
     // Configure the observer to watch for changes to the email body subtree
@@ -264,7 +265,7 @@ function injectSidebarElements() {
     let grammarCount = 0;
     
     let chunks = [];
-    if (emailBody && emailBody.textContent) {
+    if (lastEmailBody && lastEmailBody.textContent) {
       chunks = splitTextIntoChunks(document.querySelector('.a3s.aiL').textContent, 50);
     }
 
