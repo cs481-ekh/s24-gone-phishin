@@ -1,6 +1,7 @@
 // Displays interface, credit to ChatGPT
 let receivedKWs;
 let matchedKeywords = [];
+let hyperlinks = [];
 
 //Set starting state
 chrome.storage.sync.get('enabled', function (result) {
@@ -40,7 +41,7 @@ function splitTextIntoChunks(text, wordsPerChunk) {
   let chunks = [];
   let currentChunk = '';
 
-  if(text === null) {
+  if (text === null) {
     return chunks;
   }
   // Split the text into words
@@ -107,12 +108,18 @@ function injectSidebarElements() {
   analysisDiv.style.padding = '10px'; // Add padding for spacing
   analysisDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
 
+  const rescanButton = document.createElement('button');
+  rescanButton.textContent = "Rescan email";
+  rescanButton.style.marginBottom = '5px';
+  rescanButton.style.cursor = "pointer";
+
   const spellingButton = document.createElement('button');
   spellingButton.class = "collapsible";
   spellingButton.style.backgroundColor = "#ccc";
   spellingButton.style.color = "#222";
   spellingButton.style.cursor = "pointer";
   spellingButton.style.padding = "18px";
+  spellingButton.style.marginTop = '5px';
   spellingButton.style.width = '100%';
   spellingButton.style.border = 'none';
   spellingButton.style.textAlign = 'left';
@@ -129,6 +136,7 @@ function injectSidebarElements() {
   grammarButton.style.color = "#222";
   grammarButton.style.cursor = "pointer";
   grammarButton.style.padding = "18px";
+  grammarButton.style.marginTop = '5px';
   grammarButton.style.width = '100%';
   grammarButton.style.border = 'none';
   grammarButton.style.textAlign = 'left';
@@ -150,6 +158,7 @@ function injectSidebarElements() {
   matchedButton.style.color = "#222";
   matchedButton.style.cursor = "pointer";
   matchedButton.style.padding = "18px";
+  matchedButton.style.marginTop = '5px';
   matchedButton.style.width = '100%';
   matchedButton.style.border = 'none';
   matchedButton.style.textAlign = 'left';
@@ -160,6 +169,22 @@ function injectSidebarElements() {
   matchedDiv.id = 'matchedDiv';
   matchedDiv.style.display = 'none';
 
+  const hyperlinkButton = document.createElement('button');
+  hyperlinkButton.class = "collapsible";
+  hyperlinkButton.style.backgroundColor = "#ccc";
+  hyperlinkButton.style.color = "#222";
+  hyperlinkButton.style.cursor = "pointer";
+  hyperlinkButton.style.padding = "18px";
+  hyperlinkButton.style.width = '100%';
+  hyperlinkButton.style.border = 'none';
+  hyperlinkButton.style.textAlign = 'left';
+  hyperlinkButton.style.outline = 'none';
+  hyperlinkButton.style.fontSize = '20px';
+
+  const hyperlinkDiv = document.createElement('div');
+  hyperlinkDiv.id = 'hyperlinkDiv';
+  hyperlinkDiv.style.display = 'none';
+
   // Append the titleDiv to the sidebarDiv
   sidebarDiv.appendChild(titleDiv);
 
@@ -168,21 +193,24 @@ function injectSidebarElements() {
   sidebarDiv.appendChild(analysisDiv);
 
   //TEST CODE
+  analysisDiv.appendChild(rescanButton);
   analysisDiv.appendChild(spellingButton);
   analysisDiv.appendChild(spellingDiv);
   analysisDiv.appendChild(grammarButton);
   analysisDiv.appendChild(grammarDiv);
   analysisDiv.appendChild(matchedButton);
   analysisDiv.appendChild(matchedDiv);
+  analysisDiv.appendChild(hyperlinkButton);
+  analysisDiv.appendChild(hyperlinkDiv);
 
   // Append the tab to the document body
   document.body.appendChild(tab);
 
   // Function to tokenize email contents
-  function tokenizeEmailContents(emailBody) {
+  function tokenizeEmailContents(emailContent) {
     // Split email contents into tokens
     matchedKeywords = [];
-    const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
+    const tokens = emailContent.split(/\s+|[^\w\s'/%]+/);
 
     // Remove unneccessary tokens
     const filteredTokens = tokens.filter(token => token !== '' && token !== '‌');
@@ -216,29 +244,55 @@ function injectSidebarElements() {
 
     // Move the tab button
     tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
+    loadAnalysis()
+  });
+  rescanButton.addEventListener('click', loadAnalysis);
 
+  function loadAnalysis() {
+    console.log("Scanning email");
     var tokens = null;
-    var numTokens = 0
+    var numTokens = 0;
 
-    const emailBodies = document.querySelectorAll('.a3s.aiL');
+    // Grab the email body, subject, and sender
+    const emailBody    = document.querySelectorAll('.a3s.aiL');
+    const emailSubject = document.querySelector('h2.hP');
+    const emailSender  = document.querySelector('span.go');
+    var emailContent = null;
     var lastEmailBody;
-// Check if there are any email bodies found
-if (emailBodies.length > 0) {
-    // Get the last email body by accessing the last element in the NodeList
-    const EmailBody = emailBodies[emailBodies.length - 1];
-    lastEmailBody = EmailBody.querySelector('.a3s.aiL > :not(.HOEnZb.adl)')
-    console.log(lastEmailBody);
-    // Check if the last email body is present and contains text
-    if (lastEmailBody && lastEmailBody.textContent) {
-        // Tokenize the content of the last email
-        tokens = tokenizeEmailContents(lastEmailBody.textContent);
+    const lastEmail = emailBody[emailBody.length - 1];
 
-        // Update numTokens if there are tokens found
-        if (tokens.length > 0) {
-            numTokens = tokens.length;
-        }
+    lastEmailBody = lastEmail.querySelector('.a3s.aiL > :not(.HOEnZb.adl)');
+
+    // Create a MutationObserver to watch for changes to the email body
+    //const observer = new MutationObserver(() => {
+    // Select the email body element
+    // const emailBody = document.querySelector('.a3s.aiL');
+
+      // Check if the email body is present and contains text
+      if (lastEmailBody && emailSubject) {
+        // Concat each of the email segments
+        emailContent = lastEmailBody + " " + emailSubject.textContent;
+        
+        //parse for hyperlinks
+        hyperlinks = [];
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(emailBody.innerHTML, 'text/html');
+        const linkElements = doc.querySelectorAll('a');
+        linkElements.forEach(link => {
+          const href = link.getAttribute('href');
+          if (!hyperlinks.some(existingLink => existingLink.getAttribute('href') === href)) {
+            hyperlinks.push(link);
+            console.log("Link: ", href);
+          }
+        })
+
+        // Tokenize the email contents
+        tokens = tokenizeEmailContents(emailContent);
+
+      if (tokens.length > 0) {
+        numTokens = tokens.length;
+      }
     }
-}
     //});
 
     // Configure the observer to watch for changes to the email body subtree
@@ -261,12 +315,13 @@ if (emailBodies.length > 0) {
     let apiPromises = [];
     let spellingString = "";
     let grammarString = "";
+    let hyperlinkString = "";
     let spellingCount = 0;
     let grammarCount = 0;
-    
+
     let chunks = [];
-    if (lastEmailBody && lastEmailBody.textContent) {
-      chunks = splitTextIntoChunks(document.querySelector('.a3s.aiL').textContent, 50);
+    if (emailContent) {
+      chunks = splitTextIntoChunks(emailContent, 50);
     }
 
     chunks.forEach(chunk => {
@@ -281,30 +336,39 @@ if (emailBodies.length > 0) {
         },
         body: params.toString() + "&language=en-US&enabledOnly=false"
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log("API Response:", data);
-        const currMatches = data.matches; // Extracting the matches array
-        console.log("Matches:", currMatches);
-        currMatches.forEach(error => {
-          if (error.shortMessage == "Spelling mistake") {
-            spellingErrors.push(error)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
           }
-          else {
-            grammarErrors.push(error)
-          }
+          return response.json();
         })
-      })
+        .then(data => {
+          console.log("API Response:", data);
+          const currMatches = data.matches; // Extracting the matches array
+          console.log("Matches:", currMatches);
+          currMatches.forEach(error => {
+            if (error.shortMessage == "Spelling mistake") {
+              spellingErrors.push(error)
+            }
+            else {
+              grammarErrors.push(error)
+            }
+          })
+        })
       apiPromises.push(promise);
     })
 
     Promise.all(apiPromises)
       .then(() => {
+        //extract hyperlink info
+        hyperlinkButton.innerHTML = "<b>Hyperlinks Found: " + hyperlinks.length + "</b>";
+        hyperlinkString = "<br>Sometimes emails will include malicious links that are designed to harm your computer or steal your data. Hyperlinks don't factor into your phishing score, but you should always be aware and cautious when they're present. <br><br>";
+        hyperlinkString += "<div style='word-wrap: break-word;'>";
+        hyperlinks.forEach(link => {
+          hyperlinkString += "Link: " + link + "<br><br>";
+        })
+        hyperlinkString += "</div>";
+
         //extract spelling info
         spellingCount = spellingErrors ? spellingErrors.length : 0;
         spellingButton.innerHTML = "<b>Spelling Errors: " + spellingCount + "</b>";
@@ -325,16 +389,16 @@ if (emailBodies.length > 0) {
         //keywords I guess
         var totalRiskScore = 0;
         // if (matchedKeywords) {
-          let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
-          console.log(matchedKeywords);
-          let matchedKeywordsText = '';
-          matchedKeywords.forEach(({ keyword, riskScore, description }) => {
-            totalRiskScore = totalRiskScore + riskScore;
-            matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
-          });
-          keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
-          matchedDiv.innerHTML = keyWordLog;
-          matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
+        let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
+        console.log(matchedKeywords);
+        let matchedKeywordsText = '';
+        matchedKeywords.forEach(({ keyword, riskScore, description }) => {
+          totalRiskScore = totalRiskScore + riskScore;
+          matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
+        });
+        keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
+        matchedDiv.innerHTML = keyWordLog;
+        matchedButton.innerHTML = "<b>Keywords found: " + matchedKeywords.length + "</b>";
         // }
         if (numTokens > 0) {
           // Spelling errors
@@ -393,6 +457,15 @@ if (emailBodies.length > 0) {
       }
     });
 
+    hyperlinkButton.addEventListener("click", function () {
+      if (hyperlinkDiv.style.display === 'block') {
+        hyperlinkDiv.style.display = 'none';
+      } else {
+        hyperlinkDiv.style.display = 'block';
+        hyperlinkDiv.innerHTML = hyperlinkString;
+      }
+    });
+
     // #TODO handle comparisons with keywords
     // const tempKeywordScore = 0;
     // if (matchedKeywords) {
@@ -432,7 +505,7 @@ if (emailBodies.length > 0) {
     //     scoreBodyDiv.style.backgroundColor = '#ff0000';
     //   }
     // }
-  });
+  }
 }
 
 // Function to remove sidebar elements
@@ -443,6 +516,7 @@ function removeSidebarElements() {
   const sidebarDiv = document.getElementById('sidebarDiv');
   const scoreBodyDiv = document.getElementById('scoreBodyDiv');
   const matchedDiv = document.getElementById('matchedDiv');
+  const hyperlinkDiv = document.getElementById('hyperlinkDiv');
   // Remove sidebar elements from the DOM if they exist
   if (sidebarButton) {
     sidebarButton.remove();
@@ -458,5 +532,8 @@ function removeSidebarElements() {
   }
   if (matchedDiv) {
     matchedDiv.remove();
+  }
+  if (hyperlinkDiv) {
+    hyperlinkDiv.remove();
   }
 }
