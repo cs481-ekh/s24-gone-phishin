@@ -347,7 +347,10 @@ function injectSidebarElements() {
           const currMatches = data.matches; // Extracting the matches array
           console.log("Matches:", currMatches);
           currMatches.forEach(error => {
-            if (error.shortMessage == "Spelling mistake") {
+            if(error.message == "If a new sentence starts here, add a space and start with an uppercase letter.") {
+              //do nothing
+            }
+            else if (error.shortMessage == "Spelling mistake") {
               spellingErrors.push(error)
             }
             else {
