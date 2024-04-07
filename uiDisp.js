@@ -244,9 +244,13 @@ function injectSidebarElements() {
 
     // Move the tab button
     tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
-    loadAnalysis()
   });
   rescanButton.addEventListener('click', loadAnalysis);
+
+  // Scan email upon opening
+  window.onpopstate = function(event) {
+    loadAnalysis();
+  }
 
   function loadAnalysis() {
     console.log("Scanning email");
