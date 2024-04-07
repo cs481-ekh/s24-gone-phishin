@@ -2,6 +2,7 @@
 let receivedKWs;
 let matchedKeywords = [];
 let hyperlinks = [];
+let attachmentNames = [];
 
 //Set starting state
 chrome.storage.sync.get('enabled', function (result) {
@@ -185,6 +186,23 @@ function injectSidebarElements() {
   hyperlinkDiv.id = 'hyperlinkDiv';
   hyperlinkDiv.style.display = 'none';
 
+  const attachmentsButton = document.createElement('button');
+  attachmentsButton.class = "collapsible";
+  attachmentsButton.style.backgroundColor = "#ccc";
+  attachmentsButton.style.color = "#222";
+  attachmentsButton.style.cursor = "pointer";
+  attachmentsButton.style.padding = "18px";
+  attachmentsButton.style.width = '100%';
+  attachmentsButton.style.border = 'none';
+  attachmentsButton.style.textAlign = 'left';
+  attachmentsButton.style.outline = 'none';
+  attachmentsButton.style.fontSize = '20px';
+
+  const attachmentsDiv = document.createElement('div');
+  attachmentsDiv.id = 'attachmentsDiv';
+  attachmentsDiv.style.display = 'none';
+
+
   // Append the titleDiv to the sidebarDiv
   sidebarDiv.appendChild(titleDiv);
 
@@ -202,6 +220,8 @@ function injectSidebarElements() {
   analysisDiv.appendChild(matchedDiv);
   analysisDiv.appendChild(hyperlinkButton);
   analysisDiv.appendChild(hyperlinkDiv);
+  analysisDiv.appendChild(attachmentsButton);
+  analysisDiv.appendChild(attachmentsDiv);
 
   // Append the tab to the document body
   document.body.appendChild(tab);
@@ -261,16 +281,24 @@ function injectSidebarElements() {
 
       // Check if the email body is present and contains text
       if (emailBody && emailBody.textContent) {
-        //attachments????
+        //find attachments
         // Select all elements with the class "aZo"
         var attachments = document.querySelectorAll('.aZo');
 
         // Get the count of attachments
-        var numberOfAttachments = attachments.length;
+        attachmentNames = [];
+        attachments.forEach(function(attachment) {
+          // Find the attachment name element within the attachment
+          var attachmentNameElement = attachment.querySelector('.a3I');
 
-        // Log or use the count as needed
-        console.log('Number of attachments:', numberOfAttachments);
-
+          // Check if the attachment name element exists
+          if (attachmentNameElement) {
+            // Extract the text content of the attachment name element
+            var attachmentName = attachmentNameElement.textContent;
+            var cleanedAttachmentName = attachmentName.replace('Preview attachment', '').trim();
+            attachmentNames.push(cleanedAttachmentName);
+          }
+        })
 
         //parse for hyperlinks
         hyperlinks = [];
@@ -362,6 +390,15 @@ function injectSidebarElements() {
 
     Promise.all(apiPromises)
       .then(() => {
+        //extract attachment info
+        attachmentsButton.innerHTML = "<b>Attachments Found: " + attachmentNames.length + "</b>";
+        attachmentsString = "<br>Sometimes emails will include attachments that are designed to harm your computer. Attachmenets don't factor into your phishing score, but you should always think before you click. Never open attachments from unknown sources, and be catious of attachments with extensions like .exe<br><br>";
+        attachmentsString += "<div style='word-wrap: break-word;'>";
+        attachmentNames.forEach(attachment => {
+          attachmentsString += "Attachment: " + attachment + "<br><br>";
+        })
+        attachmentsString += "</div>";
+
         //extract hyperlink info
         hyperlinkButton.innerHTML = "<b>Hyperlinks Found: " + hyperlinks.length + "</b>";
         hyperlinkString = "<br>Sometimes emails will include malicious links that are designed to harm your computer or steal your data. Hyperlinks don't factor into your phishing score, but you should always be aware and cautious when they're present. <br><br>";
@@ -465,6 +502,15 @@ function injectSidebarElements() {
       } else {
         hyperlinkDiv.style.display = 'block';
         hyperlinkDiv.innerHTML = hyperlinkString;
+      }
+    });
+
+    attachmentsButton.addEventListener("click", function () {
+      if (attachmentsDiv.style.display === 'block') {
+        attachmentsDiv.style.display = 'none';
+      } else {
+        attachmentsDiv.style.display = 'block';
+        attachmentsDiv.innerHTML = attachmentsString;
       }
     });
 
