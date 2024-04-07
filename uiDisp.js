@@ -1,6 +1,7 @@
 // Displays interface, credit to ChatGPT
 let receivedKWs;
 let matchedKeywords = [];
+let hyperlinks = [];
 
 //Set starting state
 chrome.storage.sync.get('enabled', function (result) {
@@ -168,6 +169,22 @@ function injectSidebarElements() {
   matchedDiv.id = 'matchedDiv';
   matchedDiv.style.display = 'none';
 
+  const hyperlinkButton = document.createElement('button');
+  hyperlinkButton.class = "collapsible";
+  hyperlinkButton.style.backgroundColor = "#ccc";
+  hyperlinkButton.style.color = "#222";
+  hyperlinkButton.style.cursor = "pointer";
+  hyperlinkButton.style.padding = "18px";
+  hyperlinkButton.style.width = '100%';
+  hyperlinkButton.style.border = 'none';
+  hyperlinkButton.style.textAlign = 'left';
+  hyperlinkButton.style.outline = 'none';
+  hyperlinkButton.style.fontSize = '20px';
+
+  const hyperlinkDiv = document.createElement('div');
+  hyperlinkDiv.id = 'hyperlinkDiv';
+  hyperlinkDiv.style.display = 'none';
+
   // Append the titleDiv to the sidebarDiv
   sidebarDiv.appendChild(titleDiv);
 
@@ -183,6 +200,8 @@ function injectSidebarElements() {
   analysisDiv.appendChild(grammarDiv);
   analysisDiv.appendChild(matchedButton);
   analysisDiv.appendChild(matchedDiv);
+  analysisDiv.appendChild(hyperlinkButton);
+  analysisDiv.appendChild(hyperlinkDiv);
 
   // Append the tab to the document body
   document.body.appendChild(tab);
@@ -235,9 +254,9 @@ function injectSidebarElements() {
     var numTokens = 0;
 
     // Grab the email body, subject, and sender
-    const emailBody    = document.querySelector('.a3s.aiL').textContent;
-    const emailSubject = document.querySelector('h2.hP').textContent;
-    const emailSender  = document.querySelector('span.go').textContent;
+    const emailBody    = document.querySelector('.a3s.aiL');
+    const emailSubject = document.querySelector('h2.hP');
+    const emailSender  = document.querySelector('span.go');
     var emailContent = null;
 
     // Create a MutationObserver to watch for changes to the email body
@@ -245,14 +264,26 @@ function injectSidebarElements() {
     // Select the email body element
     // const emailBody = document.querySelector('.a3s.aiL');
 
-    // Check if the email body is present and contains textS
-    if (emailBody && emailSubject) {
-      // Concat each of the email segments
-      emailContent = emailBody.concat(" " + emailSubject);
-      //console.log('DEBUG: ' + emailContent);
+      // Check if the email body is present and contains text
+      if (emailBody && emailSubject) {
+        // Concat each of the email segments
+        emailContent = emailBody.textContent.concat(" " + emailSubject.textContent);
+        
+        //parse for hyperlinks
+        hyperlinks = [];
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(emailBody.innerHTML, 'text/html');
+        const linkElements = doc.querySelectorAll('a');
+        linkElements.forEach(link => {
+          const href = link.getAttribute('href');
+          if (!hyperlinks.some(existingLink => existingLink.getAttribute('href') === href)) {
+            hyperlinks.push(link);
+            console.log("Link: ", href);
+          }
+        })
 
-      // Tokenize the email contents
-      tokens = tokenizeEmailContents(emailContent);
+        // Tokenize the email contents
+        tokens = tokenizeEmailContents(emailContent);
 
       if (tokens.length > 0) {
         numTokens = tokens.length;
@@ -280,6 +311,7 @@ function injectSidebarElements() {
     let apiPromises = [];
     let spellingString = "";
     let grammarString = "";
+    let hyperlinkString = "";
     let spellingCount = 0;
     let grammarCount = 0;
 
@@ -324,6 +356,15 @@ function injectSidebarElements() {
 
     Promise.all(apiPromises)
       .then(() => {
+        //extract hyperlink info
+        hyperlinkButton.innerHTML = "<b>Hyperlinks Found: " + hyperlinks.length + "</b>";
+        hyperlinkString = "<br>Sometimes emails will include malicious links that are designed to harm your computer or steal your data. Hyperlinks don't factor into your phishing score, but you should always be aware and cautious when they're present. <br><br>";
+        hyperlinkString += "<div style='word-wrap: break-word;'>";
+        hyperlinks.forEach(link => {
+          hyperlinkString += "Link: " + link + "<br><br>";
+        })
+        hyperlinkString += "</div>";
+
         //extract spelling info
         spellingCount = spellingErrors ? spellingErrors.length : 0;
         spellingButton.innerHTML = "<b>Spelling Errors: " + spellingCount + "</b>";
@@ -412,6 +453,15 @@ function injectSidebarElements() {
       }
     });
 
+    hyperlinkButton.addEventListener("click", function () {
+      if (hyperlinkDiv.style.display === 'block') {
+        hyperlinkDiv.style.display = 'none';
+      } else {
+        hyperlinkDiv.style.display = 'block';
+        hyperlinkDiv.innerHTML = hyperlinkString;
+      }
+    });
+
     // #TODO handle comparisons with keywords
     // const tempKeywordScore = 0;
     // if (matchedKeywords) {
@@ -462,6 +512,7 @@ function removeSidebarElements() {
   const sidebarDiv = document.getElementById('sidebarDiv');
   const scoreBodyDiv = document.getElementById('scoreBodyDiv');
   const matchedDiv = document.getElementById('matchedDiv');
+  const hyperlinkDiv = document.getElementById('hyperlinkDiv');
   // Remove sidebar elements from the DOM if they exist
   if (sidebarButton) {
     sidebarButton.remove();
@@ -477,5 +528,8 @@ function removeSidebarElements() {
   }
   if (matchedDiv) {
     matchedDiv.remove();
+  }
+  if (hyperlinkDiv) {
+    hyperlinkDiv.remove();
   }
 }
