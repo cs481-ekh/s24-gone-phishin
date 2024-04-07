@@ -1,0 +1,52 @@
+body {
+    border: solid;
+    border-width: 10px;
+    border-color: #88001b;
+    background-color: #ccc;
+    font-family: arial;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+    background-color: #aaa;
+    color: black;
+    padding: 15px;
+    margin: 10px;
+    border: solid 5px #0097db;
+    display: inline-block;
+    align-self: center;
+}
+
+h2 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+p {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.helpGrid {
+    display: flex;
+    flex-shrink: 3;
+}
+
+.helpItem {
+    background-color: #aaa;
+    border: solid 5px #0097db;
+    margin: 10px;
+}
+
+.intro {
+    display: inline-block;
+    left: 300px;
+    width: 40%;
+    background-color: #aaa;
+    border: solid 5px #88001b;
+    padding: 5px;
+    margin: 10px;
+}
