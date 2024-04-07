@@ -254,10 +254,14 @@ function injectSidebarElements() {
     var numTokens = 0;
 
     // Grab the email body, subject, and sender
-    const emailBody    = document.querySelector('.a3s.aiL');
+    const emailBody    = document.querySelectorAll('.a3s.aiL');
     const emailSubject = document.querySelector('h2.hP');
     const emailSender  = document.querySelector('span.go');
     var emailContent = null;
+    var lastEmailBody;
+    const lastEmail = emailBody[emailBody.length - 1];
+
+    lastEmailBody = lastEmail.querySelector('.a3s.aiL > :not(.HOEnZb.adl)');
 
     // Create a MutationObserver to watch for changes to the email body
     //const observer = new MutationObserver(() => {
@@ -265,9 +269,9 @@ function injectSidebarElements() {
     // const emailBody = document.querySelector('.a3s.aiL');
 
       // Check if the email body is present and contains text
-      if (emailBody && emailSubject) {
+      if (lastEmailBody && emailSubject) {
         // Concat each of the email segments
-        emailContent = emailBody.textContent.concat(" " + emailSubject.textContent);
+        emailContent = lastEmailBody + " " + emailSubject.textContent;
         
         //parse for hyperlinks
         hyperlinks = [];
