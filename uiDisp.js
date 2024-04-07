@@ -206,6 +206,23 @@ function injectSidebarElements() {
   // Append the tab to the document body
   document.body.appendChild(tab);
 
+  // Clear scan results
+  function flush() {
+    console.log("Flushing results");
+
+    scoreString = ("Confidence Score: " + 0 + '%');
+    scoreBodyDiv.textContent = scoreString;
+    scoreBodyDiv.style.backgroundColor = '#00ff00';
+
+    spellingButton.innerHTML = "<b>Spelling Errors: " + 0 + "</b>";
+    
+    grammarButton.innerHTML = "<b>Grammar Errors: " + 0 + "</b>";
+
+    matchedButton.innerHTML = "<b>Keywords found: " + 0 + "</b>";
+
+    hyperlinkButton.innerHTML = "<b>Hyperlinks Found: " + 0 + "</b>";
+  }
+
   // Function to tokenize email contents
   function tokenizeEmailContents(emailContent) {
     // Split email contents into tokens
@@ -249,7 +266,12 @@ function injectSidebarElements() {
 
   // Scan email upon opening
   window.onpopstate = function(event) {
-    loadAnalysis();
+    flush();
+
+    const currentUrl = window.location.href;
+    if (currentUrl.includes('#inbox/')) {
+      loadAnalysis();
+    }
   }
 
   function loadAnalysis() {
@@ -414,7 +436,7 @@ function injectSidebarElements() {
           // console.log(spellingScore);
           // console.log(totalRiskScore);
           //console.log(grammarScore);
-          const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
+          var scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
           scoreBodyDiv.textContent = scoreString;
           if (confidenceScore <= 25) {
             scoreBodyDiv.style.backgroundColor = '#00ff00';
