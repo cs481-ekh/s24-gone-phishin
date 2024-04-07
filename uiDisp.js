@@ -227,10 +227,10 @@ function injectSidebarElements() {
   document.body.appendChild(tab);
 
   // Function to tokenize email contents
-  function tokenizeEmailContents(emailBody) {
+  function tokenizeEmailContents(emailContent) {
     // Split email contents into tokens
     matchedKeywords = [];
-    const tokens = emailBody.split(/\s+|[^\w\s'/%]+/);
+    const tokens = emailContent.split(/\s+|[^\w\s'/%]+/);
 
     // Remove unneccessary tokens
     const filteredTokens = tokens.filter(token => token !== '' && token !== '‌');
@@ -273,14 +273,26 @@ function injectSidebarElements() {
     var tokens = null;
     var numTokens = 0;
 
-    const emailBody = document.querySelector('.a3s.aiL');
+    // Grab the email body, subject, and sender
+    const emailBody    = document.querySelectorAll('.a3s.aiL');
+    const emailSubject = document.querySelector('h2.hP');
+    const emailSender  = document.querySelector('span.go');
+    var emailContent = null;
+    var lastEmailBody;
+    const lastEmail = emailBody[emailBody.length - 1];
+
+    lastEmailBody = lastEmail.querySelector('.a3s.aiL > :not(.HOEnZb.adl)');
+
     // Create a MutationObserver to watch for changes to the email body
     //const observer = new MutationObserver(() => {
     // Select the email body element
     // const emailBody = document.querySelector('.a3s.aiL');
 
       // Check if the email body is present and contains text
-      if (emailBody && emailBody.textContent) {
+      if (lastEmailBody && emailSubject) {
+        // Concat each of the email segments
+        emailContent = lastEmailBody + " " + emailSubject.textContent;
+        
         //find attachments
         // Select all elements with the class "aZo"
         var attachments = document.querySelectorAll('.aZo');
@@ -314,12 +326,9 @@ function injectSidebarElements() {
         })
 
         // Tokenize the email contents
-        tokens = tokenizeEmailContents(emailBody.textContent);
+        tokens = tokenizeEmailContents(emailContent);
 
       if (tokens.length > 0) {
-        // Display the tokens in the sidebar
-        // analysisDiv.textContent = tokens.join(' || ');
-        // Update numTokens
         numTokens = tokens.length;
       }
     }
@@ -350,8 +359,8 @@ function injectSidebarElements() {
     let grammarCount = 0;
 
     let chunks = [];
-    if (emailBody && emailBody.textContent) {
-      chunks = splitTextIntoChunks(document.querySelector('.a3s.aiL').textContent, 50);
+    if (emailContent) {
+      chunks = splitTextIntoChunks(emailContent, 50);
     }
 
     chunks.forEach(chunk => {
@@ -377,7 +386,10 @@ function injectSidebarElements() {
           const currMatches = data.matches; // Extracting the matches array
           console.log("Matches:", currMatches);
           currMatches.forEach(error => {
-            if (error.shortMessage == "Spelling mistake") {
+            if(error.message == "If a new sentence starts here, add a space and start with an uppercase letter.") {
+              //do nothing
+            }
+            else if (error.shortMessage == "Spelling mistake") {
               spellingErrors.push(error)
             }
             else {
