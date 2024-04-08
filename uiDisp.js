@@ -264,18 +264,36 @@ function injectSidebarElements() {
   });
   rescanButton.addEventListener('click', loadAnalysis);
 
+  let needFlush = false;
   // Scan email upon opening
   window.onpopstate = function(event) {
-    flush();
 
+    // Discard previous scan results if needed
+    if (needFlush) {
+      flush();
+      needFlush = false;
+    }
+
+    // Get the url
     const currentUrl = window.location.href;
-    if (currentUrl.includes('#inbox/')) {
+
+    // Count the number of forward slashes in the URL
+    var numSlashes = (currentUrl.match(/\//g) || []).length;
+
+    if (currentUrl.includes('#category/') || currentUrl.includes('#label/')) {
+      numSlashes = numSlashes - 1;
+    }
+
+    if (numSlashes >= 7) {
       loadAnalysis();
     }
   }
 
   function loadAnalysis() {
     console.log("Scanning email");
+
+    needFlush = true;
+
     var tokens = null;
     var numTokens = 0;
 
