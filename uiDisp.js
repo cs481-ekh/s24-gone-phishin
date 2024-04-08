@@ -285,7 +285,9 @@ function injectSidebarElements() {
     }
 
     if (numSlashes >= 7) {
-      loadAnalysis();
+      setTimeout(function() {
+        loadAnalysis();
+      }, 1000);
     }
   }
 
