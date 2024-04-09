@@ -224,7 +224,7 @@ function injectSidebarElements() {
       const lowercaseToken = token.toLowerCase();
       receivedKWs.forEach(keyword => {
         const lowercaseKeyword = keyword.keyword;
-        if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword.toLowerCase() === lowercaseKeyword)) {
+        if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword === lowercaseKeyword)) {
           matchedKeywords.push({ keyword: keyword.keyword, riskScore: keyword.riskScore, description: keyword.description });
         }
       });
