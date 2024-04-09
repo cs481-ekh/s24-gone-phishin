@@ -206,6 +206,23 @@ function injectSidebarElements() {
   // Append the tab to the document body
   document.body.appendChild(tab);
 
+  // Clear scan results
+  function flush() {
+    console.log("Flushing results");
+
+    scoreString = ("Confidence Score: " + 0 + '%');
+    scoreBodyDiv.textContent = scoreString;
+    scoreBodyDiv.style.backgroundColor = '#00ff00';
+
+    spellingButton.innerHTML = "<b>Spelling Errors: " + 0 + "</b>";
+    
+    grammarButton.innerHTML = "<b>Grammar Errors: " + 0 + "</b>";
+
+    matchedButton.innerHTML = "<b>Keywords found: " + 0 + "</b>";
+
+    hyperlinkButton.innerHTML = "<b>Hyperlinks Found: " + 0 + "</b>";
+  }
+
   // Function to tokenize email contents
   function tokenizeEmailContents(emailContent) {
     // Split email contents into tokens
@@ -244,12 +261,41 @@ function injectSidebarElements() {
 
     // Move the tab button
     tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
-    loadAnalysis()
   });
   rescanButton.addEventListener('click', loadAnalysis);
 
+  let needFlush = false;
+  // Scan email upon opening
+  window.onpopstate = function(event) {
+
+    // Discard previous scan results if needed
+    if (needFlush) {
+      flush();
+      needFlush = false;
+    }
+
+    // Get the url
+    const currentUrl = window.location.href;
+
+    // Count the number of forward slashes in the URL
+    var numSlashes = (currentUrl.match(/\//g) || []).length;
+
+    if (currentUrl.includes('#category/') || currentUrl.includes('#label/')) {
+      numSlashes = numSlashes - 1;
+    }
+
+    if (numSlashes >= 7) {
+      setTimeout(function() {
+        loadAnalysis();
+      }, 1000);
+    }
+  }
+
   function loadAnalysis() {
     console.log("Scanning email");
+
+    needFlush = true;
+
     var tokens = null;
     var numTokens = 0;
 
@@ -417,7 +463,7 @@ function injectSidebarElements() {
           // console.log(spellingScore);
           // console.log(totalRiskScore);
           //console.log(grammarScore);
-          const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
+          var scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
           scoreBodyDiv.textContent = scoreString;
           if (confidenceScore <= 25) {
             scoreBodyDiv.style.backgroundColor = '#00ff00';
