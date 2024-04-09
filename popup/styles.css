@@ -7,6 +7,14 @@ h1 {
     text-align: center;
 }
 
+p {
+  text-align: center;
+}
+
+button {
+  text-align: center;
+}
+
 /* The switch - the box around the slider */
 .switch {
     position: relative;

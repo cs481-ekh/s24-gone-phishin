@@ -18,16 +18,19 @@ h1 {
     border: solid 5px #0097db;
     display: inline-block;
     align-self: center;
+    font-size: 36px;
 }
 
 h2 {
     padding-left: 10px;
     padding-right: 10px;
+    font-size: 24px;
 }
 
 p {
     padding-left: 15px;
     padding-right: 15px;
+    font-size: 18px;
 }
 
 .helpGrid {
@@ -49,4 +52,5 @@ p {
     border: solid 5px #88001b;
     padding: 5px;
     margin: 10px;
+    font-size: 18px;
 }
