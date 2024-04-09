@@ -245,6 +245,34 @@ function injectSidebarElements() {
     return filteredTokens;
   }
 
+  // Once the webpage has fully loaded, execute this code
+  window.addEventListener('load', function() {
+    console.log("Webpage fully loaded!");
+
+    // Event listener for gmail's sidebar
+    const gmailTab = document.querySelector('[class*="aT5-aOt-I brC-dA-I"]');
+    
+    if (gmailTab) {
+      gmailTab.addEventListener('click', function(event) {
+        // Grab gmail bar
+        const gmailBar = document.querySelector('.brC-aT5-aOt-Jw');
+        const barWidth = gmailBar.clientWidth;
+        console.log("BAR WIDTH: " + barWidth);
+        // Move sidebar if neccessary
+        if (barWidth != 0) {
+          const barPos = parseInt(sidebarDiv.style.right) + barWidth;
+          const tabPos = parseInt(tab.style.right) + barWidth;
+          //console.log(tabPos + 'px')
+          sidebarDiv.style.right = barPos + 'px';
+          tab.style.right = tabPos + 'px';
+        }
+
+      });
+    } else {
+      console.error('gmail tab not found');
+    }
+  });
+
   // Add event listener to the tab
   tab.addEventListener('click', () => {
     // Toggle the visibility of the sidebar
@@ -262,6 +290,7 @@ function injectSidebarElements() {
     // Move the tab button
     tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
   });
+
   rescanButton.addEventListener('click', loadAnalysis);
 
   let needFlush = false;
