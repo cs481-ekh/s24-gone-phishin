@@ -1,5 +1,5 @@
 // Displays interface, credit to ChatGPT
-let receivedKWs;
+let receivedKWs; 
 let matchedKeywords = [];
 let hyperlinks = [];
 
