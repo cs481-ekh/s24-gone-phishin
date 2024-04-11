@@ -1,4 +1,3 @@
-
 // Displays interface, credit to ChatGPT
 let receivedKWs;
 let matchedKeywords = [];
@@ -32,11 +31,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       removeSidebarElements();
     }
   } else if (message.keywords) {
-    receivedKWs = keywords.map(keyword => ({
-      keyword: keyword.keyword.toLowerCase(),
-      riskScore: keyword.riskScore,
-      description: keyword.description
-  }));
+    receivedKWs = keywords;
     console.log('Received keywords from background:', keywords);
   }
 })
@@ -240,8 +235,8 @@ function injectSidebarElements() {
     filteredTokens.forEach(token => {
       const lowercaseToken = token.toLowerCase();
       receivedKWs.forEach(keyword => {
-        const lowercaseKeyword = keyword.keyword;
-        if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword === lowercaseKeyword)) {
+        const lowercaseKeyword = keyword.keyword.toLowerCase();
+        if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword.toLowerCase() === lowercaseKeyword)) {
           matchedKeywords.push({ keyword: keyword.keyword, riskScore: keyword.riskScore, description: keyword.description });
         }
       });
@@ -297,7 +292,6 @@ function injectSidebarElements() {
   }
 
   function loadAnalysis() {
-    console.time('UID Disp Loading Time');
     console.log("Scanning email");
 
     needFlush = true;
@@ -399,7 +393,7 @@ function injectSidebarElements() {
           const currMatches = data.matches; // Extracting the matches array
           console.log("Matches:", currMatches);
           currMatches.forEach(error => {
-            if(error.message == "If a new sentence starts here, add a space and start with an uppercase letter.") {
+            if(error.message == "If a new sentence starts here, add a space and start with an uppercase letter." || error.context.text.includes("[object HTMLDivElement]")) {
               //do nothing
             }
             else if (error.shortMessage == "Spelling mistake") {
@@ -560,7 +554,6 @@ function injectSidebarElements() {
     //     scoreBodyDiv.style.backgroundColor = '#ff0000';
     //   }
     // }
-    console.timeEnd('UID Disp Loading Time');
   }
 }
 
