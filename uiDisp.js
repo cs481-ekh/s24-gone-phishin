@@ -310,6 +310,7 @@ function injectSidebarElements() {
     const emailSubject = document.querySelector('h2.hP');
     const emailSender  = document.querySelector('span.go');
     var emailContent = null;
+    
     //var lastEmailBody;
     //const lastEmail = emailBody[emailBody.length - 1];
 
