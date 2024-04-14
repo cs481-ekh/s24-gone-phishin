@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   var enableToggle = document.getElementById('enableToggle');
   var helpButton = document.getElementById('helpButton');
+  var aboutButton = document.getElementById('aboutButton');
 
   // Load settings
   chrome.storage.sync.get('enabled', function (result) {
@@ -17,6 +18,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   helpButton.addEventListener('click', function () {
     window.open('../help/help.html');
+  });
+
+  aboutButton.addEventListener('click', function () {
+    window.open('../about/about.html');
   });
 });
 

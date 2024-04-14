@@ -1,0 +1,54 @@
+body {
+    /* border: solid;
+    border-width: 10px;
+    border-color: #88001b; */
+    /* background-color: #ccc; */
+    font-family: arial;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background-image: url('/images/ocean.jpg');
+    background-size: cover;
+}
+
+h1 {
+    text-align: center;
+    background-color: #aaa;
+    color: black;
+    padding: 15px;
+    margin: 10px;
+    border: solid 5px #88001b;
+    display: inline-block;
+    align-self: center;
+    font-size: 36px;
+}
+
+h2 {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 24px;
+}
+
+p {
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 18px;
+}
+
+.aboutGrid {
+    display: flex;
+    flex-shrink: 3;
+}
+
+.aboutItem {
+    background-color: #aaa;
+    border: solid 5px #88001b;
+    margin: 10px;
+}
+
+.aboutItemPicture {
+    background-color: #aaa;
+    border: solid 5px #0097db;
+    margin: 10px;
+}
+
