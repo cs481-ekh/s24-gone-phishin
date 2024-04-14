@@ -1,3 +1,4 @@
+
 // Displays interface, credit to ChatGPT
 let receivedKWs;
 let matchedKeywords = [];
@@ -32,7 +33,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       removeSidebarElements();
     }
   } else if (message.keywords) {
-    receivedKWs = keywords;
+    receivedKWs = keywords.map(keyword => ({
+      keyword: keyword.keyword.toLowerCase(),
+      riskScore: keyword.riskScore,
+      description: keyword.description
+  }));
     console.log('Received keywords from background:', keywords);
   }
 })
@@ -255,8 +260,8 @@ function injectSidebarElements() {
     filteredTokens.forEach(token => {
       const lowercaseToken = token.toLowerCase();
       receivedKWs.forEach(keyword => {
-        const lowercaseKeyword = keyword.keyword.toLowerCase();
-        if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword.toLowerCase() === lowercaseKeyword)) {
+        const lowercaseKeyword = keyword.keyword;
+        if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword === lowercaseKeyword)) {
           matchedKeywords.push({ keyword: keyword.keyword, riskScore: keyword.riskScore, description: keyword.description });
         }
       });
@@ -312,6 +317,7 @@ function injectSidebarElements() {
   }
 
   function loadAnalysis() {
+    console.time('UID Disp Loading Time');
     console.log("Scanning email");
 
     needFlush = true;
@@ -611,6 +617,7 @@ function injectSidebarElements() {
     //     scoreBodyDiv.style.backgroundColor = '#ff0000';
     //   }
     // }
+    console.timeEnd('UID Disp Loading Time');
   }
 }
 
