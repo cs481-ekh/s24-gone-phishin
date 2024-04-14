@@ -90,21 +90,34 @@ request.onsuccess = function(event) {
         // Send a message containing the keywords array to the background script
         chrome.runtime.sendMessage({ keywords: keywords });
       });
-
+      //This timestamps when the extension is either turned off or when it is turned on
       chrome.storage.onChanged.addListener(function(changes, namespace) {
         if (changes.enabled) {
             var enabled = changes.enabled.newValue;
             var timestamp = Date.now();
 
             var request = event.target.result.transaction(["events"], "readwrite")
-                                .objectStore("events")
-                                .add({ enabled: enabled, timestamp: timestamp });
+                .objectStore("events")
+                .add({ enabled: enabled, timestamp: timestamp });
 
             request.onerror = function(event) {
                 console.error("Error adding event to events object store:", event.target.error);
             };
         }
-    });
+       });
+       //This timestamps the occurance of an email that is greater that 75% or in other words "High-Risk"
+       chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+        if (message && message.eventName === "High-Risk") {
+            var timestamp = Date.now();
+            var request = event.target.result.transaction(["events"], "readwrite")
+                .objectStore("events")
+                .add({ eventName: "High-Risk", timestamp: timestamp });
+                console.log("High-Risk email scanned and timestamped.");
+            request.onerror = function(event) {
+                console.error("Error adding event to events object store:", event.target.error);
+            };
+        }
+       });
 
 };
 

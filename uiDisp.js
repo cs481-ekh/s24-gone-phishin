@@ -310,11 +310,6 @@ function injectSidebarElements() {
     const emailSubject = document.querySelector('h2.hP');
     const emailSender  = document.querySelector('span.go');
     var emailContent = null;
-    // var lastEmailBody;
-    // const lastEmail = emailBody[emailBody.length - 1];
-
-    //lastEmailBody = lastEmail.querySelector('.a3s.aiL > :not(.HOEnZb.adl)');
-
 
       // Check if the email body is present and contains text
       if (emailBody && emailSubject) {
@@ -444,6 +439,10 @@ function injectSidebarElements() {
           const keywordScore = Math.min(((totalRiskScore / numTokens) * 100), 100);
           // Confidence score algorithm
           const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
+          // If the email is "High risk" this sends a message to the background script to timestamp the occurence
+          if(confidenceScore >= 75) {
+            chrome.runtime.sendMessage({eventName: "High-Risk"});
+          }
           // console.log(spellingCount);
           // console.log(numTokens);
           // console.log(spellingScore);
