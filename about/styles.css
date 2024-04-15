@@ -38,6 +38,7 @@ p {
 .aboutGrid {
     display: flex;
     flex-shrink: 3;
+    justify-content: center;
 }
 
 .aboutItem {
