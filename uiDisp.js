@@ -1,6 +1,5 @@
-
 // Displays interface, credit to ChatGPT
-let receivedKWs;
+let receivedKWs; 
 let matchedKeywords = [];
 let hyperlinks = [];
 let attachmentNames = [];
@@ -37,7 +36,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       keyword: keyword.keyword.toLowerCase(),
       riskScore: keyword.riskScore,
       description: keyword.description
-  }));
+    }));
     console.log('Received keywords from background:', keywords);
   }
 })
@@ -438,7 +437,7 @@ function injectSidebarElements() {
           const currMatches = data.matches; // Extracting the matches array
           console.log("Matches:", currMatches);
           currMatches.forEach(error => {
-            if(error.message == "If a new sentence starts here, add a space and start with an uppercase letter.") {
+            if(error.message == "If a new sentence starts here, add a space and start with an uppercase letter." || error.context.text.includes("[object HTMLDivElement]")) {
               //do nothing
             }
             else if (error.shortMessage == "Spelling mistake") {
