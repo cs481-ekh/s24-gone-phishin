@@ -325,24 +325,15 @@ function injectSidebarElements() {
     var numTokens = 0;
 
     // Grab the email body, subject, and sender
-    const emailBody    = document.querySelectorAll('.a3s.aiL');
+    const emailBody    = document.querySelector('.a3s.aiL:last-of-type > :not(.HOEnZb.adl)');
     const emailSubject = document.querySelector('h2.hP');
     const emailSender  = document.querySelector('span.go');
     var emailContent = null;
-    var lastEmailBody;
-    const lastEmail = emailBody[emailBody.length - 1];
-
-    lastEmailBody = lastEmail.querySelector('.a3s.aiL > :not(.HOEnZb.adl)');
-
-    // Create a MutationObserver to watch for changes to the email body
-    //const observer = new MutationObserver(() => {
-    // Select the email body element
-    // const emailBody = document.querySelector('.a3s.aiL');
 
       // Check if the email body is present and contains text
-      if (lastEmailBody && emailSubject) {
+      if (emailBody && emailSubject) {
         // Concat each of the email segments
-        emailContent = lastEmailBody + " " + emailSubject.textContent;
+        emailContent = emailBody.textContent + " " + emailSubject.textContent;
         
         //find attachments
         // Select all elements with the class "aZo"
@@ -383,22 +374,6 @@ function injectSidebarElements() {
         numTokens = tokens.length;
       }
     }
-    //});
-
-    // Configure the observer to watch for changes to the email body subtree
-    // observer.observe(document.body, {
-    //   subtree: true,
-    //   childList: true,
-    // });
-
-    // if (matchedKeywords) {
-    //   matchedKeywords = [];
-    //   let matchedKeywordsText = '';
-    //   matchedKeywords.forEach(({ keyword, riskScore, description }) => {
-    //     matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
-    //   });
-    //   matchedDiv.textContent = " " + matchedKeywordsText;
-    // }
 
     let spellingErrors = [];
     let grammarErrors = [];
@@ -511,6 +486,10 @@ function injectSidebarElements() {
           const keywordScore = Math.min(((totalRiskScore / numTokens) * 100), 100);
           // Confidence score algorithm
           const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
+          // If the email is "High risk" this sends a message to the background script to timestamp the occurence
+          if(confidenceScore >= 75) {
+            chrome.runtime.sendMessage({eventName: "High-Risk"});
+          }
           // console.log(spellingCount);
           // console.log(numTokens);
           // console.log(spellingScore);

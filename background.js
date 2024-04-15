@@ -24,5 +24,11 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
         chrome.tabs.sendMessage(tabs[0].id, { keywords: keywords });
       });
     }
+    // if the uiDisp scanned a high risk email this sends the message to the dbHandler
+    if(message.eventName == "High-Risk") {
+      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { eventName: "High-Risk" });
+    });
+    }
   });
   
