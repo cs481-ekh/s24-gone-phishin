@@ -306,24 +306,15 @@ function injectSidebarElements() {
     var numTokens = 0;
 
     // Grab the email body, subject, and sender
-    const emailBody    = document.querySelectorAll('.a3s.aiL');
+    const emailBody    = document.querySelector('.a3s.aiL:last-of-type > :not(.HOEnZb.adl)');
     const emailSubject = document.querySelector('h2.hP');
     const emailSender  = document.querySelector('span.go');
     var emailContent = null;
-    var lastEmailBody;
-    const lastEmail = emailBody[emailBody.length - 1];
-
-    lastEmailBody = lastEmail.querySelector('.a3s.aiL > :not(.HOEnZb.adl)');
-
-    // Create a MutationObserver to watch for changes to the email body
-    //const observer = new MutationObserver(() => {
-    // Select the email body element
-    // const emailBody = document.querySelector('.a3s.aiL');
 
       // Check if the email body is present and contains text
-      if (lastEmailBody && emailSubject) {
+      if (emailBody && emailSubject) {
         // Concat each of the email segments
-        emailContent = lastEmailBody + " " + emailSubject.textContent;
+        emailContent = emailBody.textContent + " " + emailSubject.textContent;
         
         //parse for hyperlinks
         hyperlinks = [];
@@ -345,22 +336,6 @@ function injectSidebarElements() {
         numTokens = tokens.length;
       }
     }
-    //});
-
-    // Configure the observer to watch for changes to the email body subtree
-    // observer.observe(document.body, {
-    //   subtree: true,
-    //   childList: true,
-    // });
-
-    // if (matchedKeywords) {
-    //   matchedKeywords = [];
-    //   let matchedKeywordsText = '';
-    //   matchedKeywords.forEach(({ keyword, riskScore, description }) => {
-    //     matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
-    //   });
-    //   matchedDiv.textContent = " " + matchedKeywordsText;
-    // }
 
     let spellingErrors = [];
     let grammarErrors = [];
@@ -441,9 +416,7 @@ function injectSidebarElements() {
           grammarString += "Context: " + error.context.text + "<br><br>";
         })
 
-        //keywords I guess
         var totalRiskScore = 0;
-        // if (matchedKeywords) {
         let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
         console.log(matchedKeywords);
         let matchedKeywordsText = '';
@@ -454,7 +427,6 @@ function injectSidebarElements() {
         keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
         matchedDiv.innerHTML = keyWordLog;
         matchedButton.innerHTML = "<b>Keywords found: " + matchedKeywords.length + "</b>";
-        // }
         if (numTokens > 0) {
           // Spelling errors
           const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
@@ -480,6 +452,15 @@ function injectSidebarElements() {
           } else {
             scoreBodyDiv.style.backgroundColor = '#ff0000';
           }
+          const message = {
+            type: 'analysisData',
+            keywords: keyWordLog,
+            spelling: spellingString,
+            grammar: grammarString,
+            hyperlinks: hyperlinkString,
+            score: scoreString
+          };
+          chrome.runtime.sendMessage(message);
         }
       })
       .catch(error => {
@@ -521,19 +502,6 @@ function injectSidebarElements() {
       }
     });
 
-    // #TODO handle comparisons with keywords
-    // const tempKeywordScore = 0;
-    // if (matchedKeywords) {
-    //   let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
-    //   console.log(matchedKeywords);
-    //   let matchedKeywordsText = '';
-    //   matchedKeywords.forEach(({ keyword, riskScore }) => {
-    //     matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
-    //   });
-    //   keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
-    //   matchedDiv.innerHTML = keyWordLog;
-    //   matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
-    // }
     // if (numTokens > 0) {
     //   console.log("bleh")
     //   // Spelling errors

@@ -24,5 +24,19 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
         chrome.tabs.sendMessage(tabs[0].id, { keywords: keywords });
       });
     }
+
+    if (message.type === 'analysisData') {
+      console.log("message received: " + message);
+      // Send the message to the content script (detailedreport.js)
+      chrome.tabs.query({ url: chrome.runtime.getURL('pages/detailedReport.html') }, function (tabs) {
+          tabs.forEach(tab => {
+              chrome.tabs.sendMessage(tab.id, message, function(response) {
+                  if (!response) {
+                      console.error("Failed to send message to detailedreport.js.");
+                  }
+              });
+          });
+      });
+    }
   });
   
