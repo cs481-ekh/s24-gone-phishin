@@ -24,19 +24,26 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
         chrome.tabs.sendMessage(tabs[0].id, { keywords: keywords });
       });
     }
-
-    if (message.type === 'analysisData') {
-      console.log("message received: " + message);
-      // Send the message to the content script (detailedreport.js)
-      chrome.tabs.query({ url: chrome.runtime.getURL('pages/detailedReport.html') }, function (tabs) {
-          tabs.forEach(tab => {
-              chrome.tabs.sendMessage(tab.id, message, function(response) {
-                  if (!response) {
-                      console.error("Failed to send message to detailedreport.js.");
-                  }
-              });
-          });
-      });
-    }
   });
-  
+
+  chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    if (message.type === 'analysisData') {
+        console.log("Message received: " + message);
+        
+        // Send the message to the content script (detailedReport.js)
+        chrome.tabs.query({ url: '*://*/detailedReport.html' }, function(tabs) {
+            tabs.forEach(tab => {
+                chrome.tabs.sendMessage(tab.id, message, function(response) {
+                    if (!response) {
+                        console.error("Failed to send message to detailedreport.js.");
+                    }
+                });
+            });
+        });
+
+        // Additionally, store the analysis data in local storage for later retrieval if needed
+        chrome.storage.local.set({ 'analysisData': message }, function() {
+            console.log("Analysis data saved to local storage.");
+        });
+    }
+});

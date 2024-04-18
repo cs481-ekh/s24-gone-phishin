@@ -68,6 +68,18 @@ p {
     font-size: 18px;
 }
 
+.confidence {
+    display: inline-block;
+    left: 300px;
+    width: 40%;
+    background-color: #aaa;
+    border: solid 5px #88001b;
+    padding: 5px;
+    margin: 10px;
+    font-size: 18px;
+    background-color: inherit;
+}
+
 .collapsible {
     background-color: #eee;
     color: #444;

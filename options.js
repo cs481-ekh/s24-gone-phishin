@@ -18,10 +18,6 @@ document.addEventListener('DOMContentLoaded', function () {
   helpButton.addEventListener('click', function () {
     window.open('../help/help.html');
   });
-
-  detailedReportButton.addEventListener('click', function () {
-    window.open('../pages/detailedReport.html');
-  });
 });
 
   
