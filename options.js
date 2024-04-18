@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var enableToggle = document.getElementById('enableToggle');
   var helpButton = document.getElementById('helpButton');
   var aboutButton = document.getElementById('aboutButton');
-  var sdpImg = document.getElementById('sdpImg');
+  var sdp = document.getElementById('sdpContainer');
   var sdpInfo = document.getElementById('sdp');
 
   // Load settings
@@ -26,12 +26,12 @@ document.addEventListener('DOMContentLoaded', function () {
     window.open('../about/about.html');
   });
 
-  sdpImg.addEventListener('mouseover', function () {
-    sdpInfo.style.visibility = 'revert';
+  sdp.addEventListener('mouseover', function () {
+    sdpInfo.style.display = 'block';
   })
 
-  sdpImg.addEventListener('mouseleave', function () {
-    sdpInfo.style.visibility = 'collapse';
+  sdp.addEventListener('mouseleave', function () {
+    sdpInfo.style.display = 'none';
   })
 });
 

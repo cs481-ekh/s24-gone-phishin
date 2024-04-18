@@ -1,6 +1,17 @@
+body {
+  width: 200;
+  background-color: #ccc;
+  border: solid;
+  border-width: 10px;
+  border-color: #88001b;
+}
+
 #logoImage {
-  height: 200px;
+  display: block;
+  height: 150px;
   width: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 h1 {
@@ -78,15 +89,22 @@ input:checked+.slider:before {
   border-radius: 50%;
 }
 
+#sdpContainer {
+  width: 200px;
+}
+
 #sdp {
-  position: absolute;
-  margin: 10px;
+  display: none;
+  margin: 5px;
+  width: 180;
 }
 
 #sdpImg {
   width: 150px;
   cursor: pointer;
   display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #sdp > div {
@@ -96,8 +114,10 @@ input:checked+.slider:before {
   margin: 15px;
   padding: 15px;
   border-radius: 15px;
-  visibility: visible;
   position: relative;
+  width: 100px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #sdp a {
