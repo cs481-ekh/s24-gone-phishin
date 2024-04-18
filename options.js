@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var enableToggle = document.getElementById('enableToggle');
   var helpButton = document.getElementById('helpButton');
   var aboutButton = document.getElementById('aboutButton');
+  var sdpImg = document.getElementById('sdpImg');
+  var sdpInfo = document.getElementById('sdp');
 
   // Load settings
   chrome.storage.sync.get('enabled', function (result) {
@@ -23,6 +25,14 @@ document.addEventListener('DOMContentLoaded', function () {
   aboutButton.addEventListener('click', function () {
     window.open('../about/about.html');
   });
+
+  sdpImg.addEventListener('mouseover', function () {
+    sdpInfo.style.visibility = 'revert';
+  })
+
+  sdpImg.addEventListener('mouseleave', function () {
+    sdpInfo.style.visibility = 'collapse';
+  })
 });
 
   
