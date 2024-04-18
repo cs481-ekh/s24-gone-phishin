@@ -335,7 +335,7 @@ function injectSidebarElements() {
       if (emailBody && emailSubject) {
         // Concat each of the email segments
         emailContent = emailBody.textContent + " " + emailSubject.textContent;
-        
+        console.log("if emailbody reached");
         //find attachments
         // Select all elements with the class "aZo"
         var attachments = document.querySelectorAll('.aZo');
@@ -505,7 +505,7 @@ function injectSidebarElements() {
             spelling: spellingString,
             grammar: grammarString,
             hyperlinks: hyperlinkString,
-            score: confidenceScore,
+            score: confidenceScore.toFixed(2),
             numKeywords: matchedKeywords.length,
             numSpelling: spellingErrors.length,
             numGrammar: grammarErrors.length,
@@ -513,6 +513,7 @@ function injectSidebarElements() {
             attachments: attachmentsString,
             numAttachments: attachmentNames.length
           };
+          console.log("reached");
           chrome.runtime.sendMessage(message);
         }
       })
