@@ -91,7 +91,7 @@ function injectSidebarElements() {
   sidebarDiv.style.width = '15%';
   sidebarDiv.style.height = '70%';
   sidebarDiv.style.backgroundColor = 'white';
-  sidebarDiv.style.border = '1px solid black';
+  sidebarDiv.style.border = '5px solid #88001b';
   sidebarDiv.style.zIndex = '1';
 
   // Append the sidebarDiv to the document body
@@ -102,7 +102,7 @@ function injectSidebarElements() {
   titleDiv.id = 'sidebarTitle';
   titleDiv.textContent = 'Hook, Line, and Secure';
   titleDiv.style.padding = '10px';
-  titleDiv.style.backgroundColor = 'blue';
+  titleDiv.style.backgroundColor = '#2196F3';
   titleDiv.style.color = 'white';
 
   // Create a div element for the email analysis contents
@@ -112,6 +112,7 @@ function injectSidebarElements() {
   analysisDiv.style.height = '89%'; // Set height to fill the sidebar
   analysisDiv.style.padding = '10px'; // Add padding for spacing
   analysisDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
+  analysisDiv.style.backgroundColor = '#ccc';
 
   const rescanButton = document.createElement('button');
   rescanButton.textContent = "Rescan email";
@@ -130,9 +131,9 @@ function injectSidebarElements() {
   const spellingDiv = document.createElement('div');
   spellingDiv.style.backgroundColor = "#ccc";
   spellingDiv.style.color = "#222";
-  spellingDiv.style.padding = "18px";
+  spellingDiv.style.padding = "13px";
   spellingDiv.style.width = '100%';
-  spellingDiv.style.border = 'none';
+  spellingDiv.style.border = '5px solid #88001b';
   spellingDiv.style.textAlign = 'left';
   spellingDiv.style.outline = 'none';
   spellingDiv.style.fontSize = '20px';
@@ -140,9 +141,9 @@ function injectSidebarElements() {
   const grammarDiv = document.createElement('div');
   grammarDiv.style.backgroundColor = "#ccc";
   grammarDiv.style.color = "#222";
-  grammarDiv.style.padding = "18px";
+  grammarDiv.style.padding = "13px";
   grammarDiv.style.width = '100%';
-  grammarDiv.style.border = 'none';
+  grammarDiv.style.border = '5px solid #88001b';
   grammarDiv.style.textAlign = 'left';
   grammarDiv.style.outline = 'none';
   grammarDiv.style.fontSize = '20px';
@@ -155,9 +156,9 @@ function injectSidebarElements() {
   const matchedDiv = document.createElement('div');
   matchedDiv.style.backgroundColor = "#ccc";
   matchedDiv.style.color = "#222";
-  matchedDiv.style.padding = "18px";
+  matchedDiv.style.padding = "13px";
   matchedDiv.style.width = '100%';
-  matchedDiv.style.border = 'none';
+  matchedDiv.style.border = '5px solid #88001b';
   matchedDiv.style.textAlign = 'left';
   matchedDiv.style.outline = 'none';
   matchedDiv.style.fontSize = '20px';
@@ -165,9 +166,9 @@ function injectSidebarElements() {
   const hyperlinkDiv = document.createElement('div');
   hyperlinkDiv.style.backgroundColor = "#ccc";
   hyperlinkDiv.style.color = "#222";
-  hyperlinkDiv.style.padding = "18px";
+  hyperlinkDiv.style.padding = "13px";
   hyperlinkDiv.style.width = '100%';
-  hyperlinkDiv.style.border = 'none';
+  hyperlinkDiv.style.border = '5px solid #88001b';
   hyperlinkDiv.style.textAlign = 'left';
   hyperlinkDiv.style.outline = 'none';
   hyperlinkDiv.style.fontSize = '20px';
@@ -175,9 +176,9 @@ function injectSidebarElements() {
   const attachmentsDiv = document.createElement('div');
   attachmentsDiv.style.backgroundColor = "#ccc";
   attachmentsDiv.style.color = "#222";
-  attachmentsDiv.style.padding = "18px";
+  attachmentsDiv.style.padding = "13px";
   attachmentsDiv.style.width = '100%';
-  attachmentsDiv.style.border = 'none';
+  attachmentsDiv.style.border = '5px solid #88001b';
   attachmentsDiv.style.textAlign = 'left';
   attachmentsDiv.style.outline = 'none';
   attachmentsDiv.style.fontSize = '20px';
