@@ -334,7 +334,9 @@ function injectSidebarElements() {
       if (emailBody && emailSubject) {
         // Concat each of the email segments
         emailContent = emailBody.textContent + " " + emailSubject.textContent;
-        
+
+        console.log("if emailbody reached");
+
         //find attachments
         // Select all elements with the class "aZo"
         var attachments = document.querySelectorAll('.aZo');
@@ -462,10 +464,7 @@ function injectSidebarElements() {
           grammarString += "Error: " + error.message + "<br>";
           grammarString += "Context: " + error.context.text + "<br><br>";
         })
-
-        //keywords I guess
         var totalRiskScore = 0;
-        // if (matchedKeywords) {
         let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
         console.log(matchedKeywords);
         let matchedKeywordsText = '';
@@ -476,7 +475,6 @@ function injectSidebarElements() {
         keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
         matchedDiv.innerHTML = keyWordLog;
         matchedButton.innerHTML = "<b>Keywords found: " + matchedKeywords.length + "</b>";
-        // }
         if (numTokens > 0) {
           // Spelling errors
           const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
@@ -506,6 +504,22 @@ function injectSidebarElements() {
           } else {
             scoreBodyDiv.style.backgroundColor = '#ff0000';
           }
+          const message = {
+            type: 'analysisData',
+            keywords: keyWordLog,
+            spelling: spellingString,
+            grammar: grammarString,
+            hyperlinks: hyperlinkString,
+            score: confidenceScore.toFixed(2),
+            numKeywords: matchedKeywords.length,
+            numSpelling: spellingErrors.length,
+            numGrammar: grammarErrors.length,
+            numHyperlinks: hyperlinks.length,
+            attachments: attachmentsString,
+            numAttachments: attachmentNames.length
+          };
+          console.log("reached");
+          chrome.runtime.sendMessage(message);
         }
       })
       .catch(error => {
@@ -546,7 +560,6 @@ function injectSidebarElements() {
         hyperlinkDiv.innerHTML = hyperlinkString;
       }
     });
-
     attachmentsButton.addEventListener("click", function () {
       if (attachmentsDiv.style.display === 'block') {
         attachmentsDiv.style.display = 'none';
@@ -555,20 +568,7 @@ function injectSidebarElements() {
         attachmentsDiv.innerHTML = attachmentsString;
       }
     });
-
-    // #TODO handle comparisons with keywords
-    // const tempKeywordScore = 0;
-    // if (matchedKeywords) {
-    //   let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
-    //   console.log(matchedKeywords);
-    //   let matchedKeywordsText = '';
-    //   matchedKeywords.forEach(({ keyword, riskScore }) => {
-    //     matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
-    //   });
-    //   keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
-    //   matchedDiv.innerHTML = keyWordLog;
-    //   matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
-    // }
+    
     // if (numTokens > 0) {
     //   console.log("bleh")
     //   // Spelling errors

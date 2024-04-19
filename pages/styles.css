@@ -1,0 +1,109 @@
+body {
+    border: solid;
+    border-width: 10px;
+    border-color: #88001b;
+    background-color: #ccc;
+    font-family: arial;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+    background-color: #aaa;
+    color: black;
+    padding: 15px;
+    margin: 10px;
+    border: solid 5px #0097db;
+    display: inline-block;
+    align-self: center;
+    font-size: 36px;
+}
+
+h2 {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 24px;
+}
+
+p {
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 18px;
+}
+
+.helpGrid {
+    display: flex;
+    justify-content: space-between; 
+}
+
+.analysisContainer {
+    flex-grow: 1;
+    max-width: 25%;
+    border: solid 5px #0097db;
+}
+
+.analysisItem {
+    background-color: #aaa;
+    border: solid 5px #88001b;
+    margin: 10px;
+    padding: 10px; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    font-size: 16px;
+    max-height: 750px;
+    overflow-y: auto;
+}
+
+
+.intro {
+    display: inline-block;
+    left: 300px;
+    width: 40%;
+    background-color: #aaa;
+    border: solid 5px #88001b;
+    padding: 5px;
+    margin: 10px;
+    font-size: 18px;
+}
+
+.confidence {
+    display: inline-block;
+    left: 300px;
+    width: 40%;
+    background-color: #aaa;
+    border: solid 5px #88001b;
+    padding: 5px;
+    margin: 10px;
+    font-size: 18px;
+    background-color: inherit;
+}
+
+.collapsible {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 14px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 16px;
+}
+
+.active, .collapsible:hover {
+    background-color: #ccc;
+}
+
+.content {
+    display: none;
+    overflow: auto; 
+    background-color: #aaa;
+}
+
+@media screen and (max-width: 800px) {
+    .helpGrid {
+        flex-direction: column; /* Change to column layout on narrow screens */
+    }
+}

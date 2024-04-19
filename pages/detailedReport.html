@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="./styles.css"/>
+        <link rel="icon" href="../images/icon.png" type="image/x-icon">
+        <title>Detailed Report</title>
+    </head>
+    <body>
+        <main>
+
+        <h1>Detailed Report</h1>
+        <br>
+        <div class="intro">Confidence Score: <span id = "score" class="confidence"></span>%</div>
+        <br>
+        <div class="intro">Here is the detailed report of all the information gathered from the last
+            email that you scanned. Each of these sections provide some extra information on what our scanner has found.
+            Click on the section to see what was found and why it contributes to the confidence score.
+        </div><div class="helpGrid">
+            <div class = "analysisContainer">
+                <button type="button" class="collapsible">Keywords : <span id = "numKeywords"></span></button>
+                <div class = "content">
+                    <div id="keywords" class="analysisItem"></div> 
+                </div>
+            </div>
+            <div class = "analysisContainer">
+                <button type="button" class="collapsible">Spelling : <span id = "numSpelling"></span></button>
+                <div class = "content">
+                    <div id="spelling" class="analysisItem"></div> 
+                </div>
+            </div>
+            <div class = "analysisContainer">
+                <button type="button" class="collapsible">Grammar : <span id = "numGrammar"></span></button>
+                <div class = "content">
+                    <div id="grammar" class="analysisItem"></div> 
+                </div>
+            </div>
+            <div class = "analysisContainer">
+                <button type="button" class="collapsible">Hyperlinks : <span id = "numHyperlinks"></span></button>
+                <div class = "content">
+                    <div id="hyperlinks" class="analysisItem"></div> 
+                </div>
+            </div>
+            <div class = "analysisContainer">
+                <button type="button" class="collapsible">Attachments : <span id = "numAttachments"></span></button>
+                <div class = "content">
+                    <div id="attachments" class="analysisItem"></div> 
+                </div>
+            </div>
+
+            <script src="detailedReport.js"></script>
+            </div>
+        </main>
+    </body>
+</html>
