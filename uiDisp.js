@@ -118,6 +118,15 @@ function injectSidebarElements() {
   rescanButton.style.marginBottom = '5px';
   rescanButton.style.cursor = "pointer";
 
+  const detailButton = document.createElement('button');
+  detailButton.textContent = "More Details";
+  detailButton.style.marginLeft = '5px';
+  detailButton.style.marginBottom = '5px';
+  detailButton.style.cursor = "pointer";
+  detailButton.addEventListener('click', function() {
+    chrome.runtime.sendMessage({action: 'openAddRes'});
+  });
+
   const spellingButton = document.createElement('button');
   spellingButton.class = "collapsible";
   spellingButton.style.backgroundColor = "#ccc";
@@ -216,6 +225,7 @@ function injectSidebarElements() {
 
   //TEST CODE
   analysisDiv.appendChild(rescanButton);
+  analysisDiv.appendChild(detailButton);
   analysisDiv.appendChild(spellingButton);
   analysisDiv.appendChild(spellingDiv);
   analysisDiv.appendChild(grammarButton);
