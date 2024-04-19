@@ -1,6 +1,5 @@
-
 // Displays interface, credit to ChatGPT
-let receivedKWs;
+let receivedKWs; 
 let matchedKeywords = [];
 let hyperlinks = [];
 let attachmentNames = [];
@@ -37,7 +36,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       keyword: keyword.keyword.toLowerCase(),
       riskScore: keyword.riskScore,
       description: keyword.description
-  }));
+    }));
     console.log('Received keywords from background:', keywords);
   }
 })
@@ -335,7 +334,9 @@ function injectSidebarElements() {
       if (emailBody && emailSubject) {
         // Concat each of the email segments
         emailContent = emailBody.textContent + " " + emailSubject.textContent;
+
         console.log("if emailbody reached");
+
         //find attachments
         // Select all elements with the class "aZo"
         var attachments = document.querySelectorAll('.aZo');
@@ -413,7 +414,7 @@ function injectSidebarElements() {
           const currMatches = data.matches; // Extracting the matches array
           console.log("Matches:", currMatches);
           currMatches.forEach(error => {
-            if(error.message == "If a new sentence starts here, add a space and start with an uppercase letter.") {
+            if(error.message == "If a new sentence starts here, add a space and start with an uppercase letter." || error.context.text.includes("[object HTMLDivElement]")) {
               //do nothing
             }
             else if (error.shortMessage == "Spelling mistake") {
@@ -483,6 +484,10 @@ function injectSidebarElements() {
           const keywordScore = Math.min(((totalRiskScore / numTokens) * 100), 100);
           // Confidence score algorithm
           const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
+          // If the email is "High risk" this sends a message to the background script to timestamp the occurence
+          if(confidenceScore >= 75) {
+            chrome.runtime.sendMessage({eventName: "High-Risk"});
+          }
           // console.log(spellingCount);
           // console.log(numTokens);
           // console.log(spellingScore);
@@ -563,8 +568,7 @@ function injectSidebarElements() {
         attachmentsDiv.innerHTML = attachmentsString;
       }
     });
-
-
+    
     // if (numTokens > 0) {
     //   console.log("bleh")
     //   // Spelling errors
