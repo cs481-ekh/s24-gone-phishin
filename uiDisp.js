@@ -295,6 +295,10 @@ function injectSidebarElements() {
   });
   rescanButton.addEventListener('click', loadAnalysis);
 
+  addResourceButton.addEventListener('click', function() {
+    chrome.runtime.sendMessage({action: 'openAddRes'});
+  });
+
   let needFlush = false;
   // Scan email upon opening
   window.onpopstate = function(event) {

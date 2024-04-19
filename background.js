@@ -52,4 +52,10 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
             console.log("Analysis data saved to local storage.");
         });
     }
+  });
+
+  chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    if (message.action === 'openAddRes') {
+        chrome.tabs.create({ url: '../pages/additionalResources.html' });
+    }
 });
