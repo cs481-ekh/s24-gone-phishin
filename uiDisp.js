@@ -118,94 +118,69 @@ function injectSidebarElements() {
   rescanButton.style.marginBottom = '5px';
   rescanButton.style.cursor = "pointer";
 
-  const spellingButton = document.createElement('button');
-  spellingButton.class = "collapsible";
-  spellingButton.style.backgroundColor = "#ccc";
-  spellingButton.style.color = "#222";
-  spellingButton.style.cursor = "pointer";
-  spellingButton.style.padding = "18px";
-  spellingButton.style.marginTop = '5px';
-  spellingButton.style.width = '100%';
-  spellingButton.style.border = 'none';
-  spellingButton.style.textAlign = 'left';
-  spellingButton.style.outline = 'none';
-  spellingButton.style.fontSize = '20px';
+  const detailButton = document.createElement('button');
+  detailButton.textContent = "More Details";
+  detailButton.style.marginLeft = '5px';
+  detailButton.style.marginBottom = '5px';
+  detailButton.style.cursor = "pointer";
+  detailButton.addEventListener('click', function() {
+    chrome.runtime.sendMessage({action: 'openAddRes'});
+  });
 
   const spellingDiv = document.createElement('div');
-  spellingDiv.id = 'spellingDiv';
-  spellingDiv.style.display = 'none';
-
-  const grammarButton = document.createElement('button');
-  grammarButton.class = "collapsible";
-  grammarButton.style.backgroundColor = "#ccc";
-  grammarButton.style.color = "#222";
-  grammarButton.style.cursor = "pointer";
-  grammarButton.style.padding = "18px";
-  grammarButton.style.marginTop = '5px';
-  grammarButton.style.width = '100%';
-  grammarButton.style.border = 'none';
-  grammarButton.style.textAlign = 'left';
-  grammarButton.style.outline = 'none';
-  grammarButton.style.fontSize = '20px';
+  spellingDiv.style.backgroundColor = "#ccc";
+  spellingDiv.style.color = "#222";
+  spellingDiv.style.padding = "18px";
+  spellingDiv.style.width = '100%';
+  spellingDiv.style.border = 'none';
+  spellingDiv.style.textAlign = 'left';
+  spellingDiv.style.outline = 'none';
+  spellingDiv.style.fontSize = '20px';
 
   const grammarDiv = document.createElement('div');
-  grammarDiv.id = 'grammarDiv';
-  grammarDiv.style.display = 'none';
+  grammarDiv.style.backgroundColor = "#ccc";
+  grammarDiv.style.color = "#222";
+  grammarDiv.style.padding = "18px";
+  grammarDiv.style.width = '100%';
+  grammarDiv.style.border = 'none';
+  grammarDiv.style.textAlign = 'left';
+  grammarDiv.style.outline = 'none';
+  grammarDiv.style.fontSize = '20px';
 
   const scoreBodyDiv = document.createElement('div');
   scoreBodyDiv.id = 'scoreBodyDiv';
   scoreBodyDiv.style.height = '2%';
   scoreBodyDiv.style.padding = '10px';
 
-  const matchedButton = document.createElement('button');
-  matchedButton.class = "collapsible";
-  matchedButton.style.backgroundColor = "#ccc";
-  matchedButton.style.color = "#222";
-  matchedButton.style.cursor = "pointer";
-  matchedButton.style.padding = "18px";
-  matchedButton.style.marginTop = '5px';
-  matchedButton.style.width = '100%';
-  matchedButton.style.border = 'none';
-  matchedButton.style.textAlign = 'left';
-  matchedButton.style.outline = 'none';
-  matchedButton.style.fontSize = '20px';
-
   const matchedDiv = document.createElement('div');
-  matchedDiv.id = 'matchedDiv';
-  matchedDiv.style.display = 'none';
-
-  const hyperlinkButton = document.createElement('button');
-  hyperlinkButton.class = "collapsible";
-  hyperlinkButton.style.backgroundColor = "#ccc";
-  hyperlinkButton.style.color = "#222";
-  hyperlinkButton.style.cursor = "pointer";
-  hyperlinkButton.style.padding = "18px";
-  hyperlinkButton.style.width = '100%';
-  hyperlinkButton.style.border = 'none';
-  hyperlinkButton.style.textAlign = 'left';
-  hyperlinkButton.style.outline = 'none';
-  hyperlinkButton.style.fontSize = '20px';
+  matchedDiv.style.backgroundColor = "#ccc";
+  matchedDiv.style.color = "#222";
+  matchedDiv.style.padding = "18px";
+  matchedDiv.style.width = '100%';
+  matchedDiv.style.border = 'none';
+  matchedDiv.style.textAlign = 'left';
+  matchedDiv.style.outline = 'none';
+  matchedDiv.style.fontSize = '20px';
 
   const hyperlinkDiv = document.createElement('div');
-  hyperlinkDiv.id = 'hyperlinkDiv';
-  hyperlinkDiv.style.display = 'none';
-
-  const attachmentsButton = document.createElement('button');
-  attachmentsButton.class = "collapsible";
-  attachmentsButton.style.backgroundColor = "#ccc";
-  attachmentsButton.style.color = "#222";
-  attachmentsButton.style.cursor = "pointer";
-  attachmentsButton.style.padding = "18px";
-  attachmentsButton.style.width = '100%';
-  attachmentsButton.style.border = 'none';
-  attachmentsButton.style.textAlign = 'left';
-  attachmentsButton.style.outline = 'none';
-  attachmentsButton.style.fontSize = '20px';
+  hyperlinkDiv.style.backgroundColor = "#ccc";
+  hyperlinkDiv.style.color = "#222";
+  hyperlinkDiv.style.padding = "18px";
+  hyperlinkDiv.style.width = '100%';
+  hyperlinkDiv.style.border = 'none';
+  hyperlinkDiv.style.textAlign = 'left';
+  hyperlinkDiv.style.outline = 'none';
+  hyperlinkDiv.style.fontSize = '20px';
 
   const attachmentsDiv = document.createElement('div');
-  attachmentsDiv.id = 'attachmentsDiv';
-  attachmentsDiv.style.display = 'none';
-
+  attachmentsDiv.style.backgroundColor = "#ccc";
+  attachmentsDiv.style.color = "#222";
+  attachmentsDiv.style.padding = "18px";
+  attachmentsDiv.style.width = '100%';
+  attachmentsDiv.style.border = 'none';
+  attachmentsDiv.style.textAlign = 'left';
+  attachmentsDiv.style.outline = 'none';
+  attachmentsDiv.style.fontSize = '20px';
 
   // Append the titleDiv to the sidebarDiv
   sidebarDiv.appendChild(titleDiv);
@@ -216,15 +191,11 @@ function injectSidebarElements() {
 
   //TEST CODE
   analysisDiv.appendChild(rescanButton);
-  analysisDiv.appendChild(spellingButton);
+  analysisDiv.appendChild(detailButton);
   analysisDiv.appendChild(spellingDiv);
-  analysisDiv.appendChild(grammarButton);
   analysisDiv.appendChild(grammarDiv);
-  analysisDiv.appendChild(matchedButton);
   analysisDiv.appendChild(matchedDiv);
-  analysisDiv.appendChild(hyperlinkButton);
   analysisDiv.appendChild(hyperlinkDiv);
-  analysisDiv.appendChild(attachmentsButton);
   analysisDiv.appendChild(attachmentsDiv);
 
   // Append the tab to the document body
@@ -238,13 +209,13 @@ function injectSidebarElements() {
     scoreBodyDiv.textContent = scoreString;
     scoreBodyDiv.style.backgroundColor = '#00ff00';
 
-    spellingButton.innerHTML = "<b>Spelling Errors: " + 0 + "</b>";
+    spellingDiv.innerHTML = "<b>Spelling Errors: " + 0 + "</b>";
     
-    grammarButton.innerHTML = "<b>Grammar Errors: " + 0 + "</b>";
+    grammarDiv.innerHTML = "<b>Grammar Errors: " + 0 + "</b>";
 
-    matchedButton.innerHTML = "<b>Keywords found: " + 0 + "</b>";
+    matchedDiv.innerHTML = "<b>Keywords found: " + 0 + "</b>";
 
-    hyperlinkButton.innerHTML = "<b>Hyperlinks Found: " + 0 + "</b>";
+    hyperlinkDiv.innerHTML = "<b>Hyperlinks Found: " + 0 + "</b>";
   }
 
   // Function to tokenize email contents
@@ -431,7 +402,7 @@ function injectSidebarElements() {
     Promise.all(apiPromises)
       .then(() => {
         //extract attachment info
-        attachmentsButton.innerHTML = "<b>Attachments Found: " + attachmentNames.length + "</b>";
+        attachmentsDiv.innerHTML = "<b>Attachments Found: " + attachmentNames.length + "</b>";
         attachmentsString = "<br>Sometimes emails will include attachments that are designed to harm your computer. Attachmenets don't factor into your phishing score, but you should always think before you click. Never open attachments from unknown sources, and be catious of attachments with extensions like .exe<br><br>";
         attachmentsString += "<div style='word-wrap: break-word;'>";
         attachmentNames.forEach(attachment => {
@@ -440,7 +411,7 @@ function injectSidebarElements() {
         attachmentsString += "</div>";
 
         //extract hyperlink info
-        hyperlinkButton.innerHTML = "<b>Hyperlinks Found: " + hyperlinks.length + "</b>";
+        hyperlinkDiv.innerHTML = "<b>Hyperlinks Found: " + hyperlinks.length + "</b>";
         hyperlinkString = "<br>Sometimes emails will include malicious links that are designed to harm your computer or steal your data. Hyperlinks don't factor into your phishing score, but you should always be aware and cautious when they're present. <br><br>";
         hyperlinkString += "<div style='word-wrap: break-word;'>";
         hyperlinks.forEach(link => {
@@ -450,7 +421,7 @@ function injectSidebarElements() {
 
         //extract spelling info
         spellingCount = spellingErrors ? spellingErrors.length : 0;
-        spellingButton.innerHTML = "<b>Spelling Errors: " + spellingCount + "</b>";
+        spellingDiv.innerHTML = "<b>Spelling Errors: " + spellingCount + "</b>";
         spellingString = "<br>Often a multitude of spelling errors can be a sign of phishing. Spelling factors into 25% of the phishing score.<br><br>";
         spellingErrors.forEach(error => {
           spellingString += "Context: " + error.context.text + "<br><br>";
@@ -458,7 +429,7 @@ function injectSidebarElements() {
 
         //Extract grammar info
         grammarCount = grammarErrors ? grammarErrors.length : 0;
-        grammarButton.innerHTML = "<b>Grammar Errors: " + grammarCount + "</b>";
+        grammarDiv.innerHTML = "<b>Grammar Errors: " + grammarCount + "</b>";
         grammarString = "<br>Often a multitude of grammar errors can be a sign of phishing. Grammar factors into 25% of the phishing score.<br><br>";
         grammarErrors.forEach(error => {
           grammarString += "Error: " + error.message + "<br>";
@@ -473,8 +444,7 @@ function injectSidebarElements() {
           matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
         });
         keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
-        matchedDiv.innerHTML = keyWordLog;
-        matchedButton.innerHTML = "<b>Keywords found: " + matchedKeywords.length + "</b>";
+        matchedDiv.innerHTML = "<b>Keywords found: " + matchedKeywords.length + "</b>";
         if (numTokens > 0) {
           // Spelling errors
           const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
@@ -525,76 +495,6 @@ function injectSidebarElements() {
       .catch(error => {
         console.error('Error:', error);
       });
-
-    spellingButton.addEventListener("click", function () {
-      if (spellingDiv.style.display === 'block') {
-        spellingDiv.style.display = 'none';
-      } else {
-        spellingDiv.style.display = 'block';
-        spellingDiv.innerHTML = spellingString;
-      }
-    })
-
-    grammarButton.addEventListener("click", function () {
-      if (grammarDiv.style.display === 'block') {
-        grammarDiv.style.display = 'none';
-      } else {
-        grammarDiv.style.display = 'block';
-        grammarDiv.innerHTML = grammarString;
-      }
-    });
-
-    matchedButton.addEventListener("click", function () {
-      if (matchedDiv.style.display === 'block') {
-        matchedDiv.style.display = 'none';
-      } else {
-        matchedDiv.style.display = 'block'
-      }
-    });
-
-    hyperlinkButton.addEventListener("click", function () {
-      if (hyperlinkDiv.style.display === 'block') {
-        hyperlinkDiv.style.display = 'none';
-      } else {
-        hyperlinkDiv.style.display = 'block';
-        hyperlinkDiv.innerHTML = hyperlinkString;
-      }
-    });
-    attachmentsButton.addEventListener("click", function () {
-      if (attachmentsDiv.style.display === 'block') {
-        attachmentsDiv.style.display = 'none';
-      } else {
-        attachmentsDiv.style.display = 'block';
-        attachmentsDiv.innerHTML = attachmentsString;
-      }
-    });
-    
-    // if (numTokens > 0) {
-    //   console.log("bleh")
-    //   // Spelling errors
-    //   const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
-    //   // Grammar errors
-    //   const grammarScore = Math.min(((grammarCount / numTokens) * 300), 100);
-    //   /// Keyword matches
-    //   const keywordScore = Math.min(((tempKeywordScore / numTokens) * 100), 100);
-    //   // Confidence score algorithm
-    //   const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
-    //   console.log(spellingCount);
-    //   console.log(numTokens);
-    //   console.log(spellingScore);
-    //   //console.log(grammarScore);
-    //   const scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
-    //   scoreBodyDiv.textContent = scoreString;
-    //   if (confidenceScore <= 25) {
-    //     scoreBodyDiv.style.backgroundColor = '#00ff00';
-    //   } else if (confidenceScore <= 50) {
-    //     scoreBodyDiv.style.backgroundColor = '#ffff00';
-    //   } else if (confidenceScore <= 75) {
-    //     scoreBodyDiv.style.backgroundColor = '#ff8800';
-    //   } else {
-    //     scoreBodyDiv.style.backgroundColor = '#ff0000';
-    //   }
-    // }
     console.timeEnd('UID Disp Loading Time');
   }
 }
@@ -602,12 +502,10 @@ function injectSidebarElements() {
 // Function to remove sidebar elements
 function removeSidebarElements() {
   // Select sidebar elements by their IDs
-  const button = document.getElementById('sidebarButton');
-  const titleBar = document.getElementById('sidebarTitle');
+  const sidebarButton = document.getElementById('sidebarButton');
+  const sidebarTitle = document.getElementById('sidebarTitle');
   const sidebarDiv = document.getElementById('sidebarDiv');
   const scoreBodyDiv = document.getElementById('scoreBodyDiv');
-  const matchedDiv = document.getElementById('matchedDiv');
-  const hyperlinkDiv = document.getElementById('hyperlinkDiv');
   // Remove sidebar elements from the DOM if they exist
   if (sidebarButton) {
     sidebarButton.remove();
@@ -620,11 +518,5 @@ function removeSidebarElements() {
   }
   if (scoreBodyDiv) {
     scoreBodyDiv.remove();
-  }
-  if (matchedDiv) {
-    matchedDiv.remove();
-  }
-  if (hyperlinkDiv) {
-    hyperlinkDiv.remove();
   }
 }
