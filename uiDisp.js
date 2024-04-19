@@ -113,6 +113,12 @@ function injectSidebarElements() {
   analysisDiv.style.padding = '10px'; // Add padding for spacing
   analysisDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
 
+  const addResourceButton = document.createElement('button');
+  addResourceButton.textContent = "Additional Resources";
+  addResourceButton.style.marginBottom = '12px';
+  addResourceButton.style.borderRadius = '5px';
+  addResourceButton.style.cursor = "pointer";
+
   const rescanButton = document.createElement('button');
   rescanButton.textContent = "Rescan email";
   rescanButton.style.marginBottom = '5px';
@@ -215,6 +221,7 @@ function injectSidebarElements() {
   sidebarDiv.appendChild(analysisDiv);
 
   //TEST CODE
+  analysisDiv.appendChild(addResourceButton);
   analysisDiv.appendChild(rescanButton);
   analysisDiv.appendChild(spellingButton);
   analysisDiv.appendChild(spellingDiv);
