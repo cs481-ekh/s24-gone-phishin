@@ -1,6 +1,10 @@
-# Hook, Line, and Secure by Team Gone Phishin'
+# Hook, Line, and Secure from Team Gone Phishin'
 
-# Spear Phisihng Detection Chrome Extension
+## Abstract:
+Abstract goes here
+
+## Project Description:
+Description goes here
 
 ## Members:
  - Kyle Doster
