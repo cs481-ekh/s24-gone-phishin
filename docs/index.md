@@ -1,8 +1,0 @@
----
-layout: default
-title: Home
----
-
-<h2>Welcome to My Site</h2>
-
-<p>This is the homepage content.</p>
