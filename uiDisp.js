@@ -118,6 +118,15 @@ function injectSidebarElements() {
   rescanButton.style.marginBottom = '5px';
   rescanButton.style.cursor = "pointer";
 
+
+  const detailButton = document.createElement('button');
+  detailButton.textContent = "More Details";
+  detailButton.style.marginLeft = '5px';
+  detailButton.style.marginBottom = '5px';
+  detailButton.style.cursor = "pointer";
+  detailButton.addEventListener('click', function() {
+    chrome.runtime.sendMessage({action: 'openAddRes'});
+
   const reportButton = document.createElement('button');
   reportButton.textContent = "I've been scammed";
   reportButton.style.marginLeft = '5px';
@@ -225,6 +234,7 @@ function injectSidebarElements() {
 
   //TEST CODE
   analysisDiv.appendChild(rescanButton);
+  analysisDiv.appendChild(detailButton);
   analysisDiv.appendChild(reportButton);
   analysisDiv.appendChild(spellingButton);
   analysisDiv.appendChild(spellingDiv);
