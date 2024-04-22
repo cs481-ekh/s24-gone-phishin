@@ -1,6 +1,10 @@
 // options.js Starter code credit to ChatGPT
 document.addEventListener('DOMContentLoaded', function () {
   var enableToggle = document.getElementById('enableToggle');
+  var helpButton = document.getElementById('helpButton');
+  var aboutButton = document.getElementById('aboutButton');
+  var sdp = document.getElementById('sdpContainer');
+  var sdpInfo = document.getElementById('sdp');
 
   // Load settings
   chrome.storage.sync.get('enabled', function (result) {
@@ -13,6 +17,22 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Settings saved:', enabled );
     });
   });
+
+  helpButton.addEventListener('click', function () {
+    window.open('../help/help.html');
+  });
+
+  aboutButton.addEventListener('click', function () {
+    window.open('../about/about.html');
+  });
+
+  sdp.addEventListener('mouseover', function () {
+    sdpInfo.style.display = 'block';
+  })
+
+  sdp.addEventListener('mouseleave', function () {
+    sdpInfo.style.display = 'none';
+  })
 });
 
   

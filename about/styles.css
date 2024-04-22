@@ -1,12 +1,14 @@
 body {
-    border: solid;
+    /* border: solid;
     border-width: 10px;
-    border-color: #88001b;
-    background-color: #ccc;
+    border-color: #88001b; */
+    /* background-color: #ccc; */
     font-family: arial;
     display: flex;
     flex-direction: column;
     text-align: center;
+    background-image: url('/images/ocean.jpg');
+    background-size: cover;
 }
 
 h1 {
@@ -15,7 +17,7 @@ h1 {
     color: black;
     padding: 15px;
     margin: 10px;
-    border: solid 5px #0097db;
+    border: solid 5px #88001b;
     display: inline-block;
     align-self: center;
     font-size: 36px;
@@ -33,24 +35,21 @@ p {
     font-size: 18px;
 }
 
-.helpGrid {
+.aboutGrid {
     display: flex;
     flex-shrink: 3;
+    justify-content: center;
 }
 
-.helpItem {
+.aboutItem {
+    background-color: #aaa;
+    border: solid 5px #88001b;
+    margin: 10px;
+}
+
+.aboutItemPicture {
     background-color: #aaa;
     border: solid 5px #0097db;
     margin: 10px;
 }
 
-.intro {
-    display: inline-block;
-    left: 300px;
-    width: 40%;
-    background-color: #aaa;
-    border: solid 5px #88001b;
-    padding: 5px;
-    margin: 10px;
-    font-size: 18px;
-}

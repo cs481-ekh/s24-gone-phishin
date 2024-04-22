@@ -1,7 +1,8 @@
 // Displays interface, credit to ChatGPT
-let receivedKWs;
+let receivedKWs; 
 let matchedKeywords = [];
 let hyperlinks = [];
+let attachmentNames = [];
 
 //Set starting state
 chrome.storage.sync.get('enabled', function (result) {
@@ -31,7 +32,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       removeSidebarElements();
     }
   } else if (message.keywords) {
-    receivedKWs = keywords;
+    receivedKWs = keywords.map(keyword => ({
+      keyword: keyword.keyword.toLowerCase(),
+      riskScore: keyword.riskScore,
+      description: keyword.description
+    }));
     console.log('Received keywords from background:', keywords);
   }
 })
@@ -191,6 +196,23 @@ function injectSidebarElements() {
   hyperlinkDiv.id = 'hyperlinkDiv';
   hyperlinkDiv.style.display = 'none';
 
+  const attachmentsButton = document.createElement('button');
+  attachmentsButton.class = "collapsible";
+  attachmentsButton.style.backgroundColor = "#ccc";
+  attachmentsButton.style.color = "#222";
+  attachmentsButton.style.cursor = "pointer";
+  attachmentsButton.style.padding = "18px";
+  attachmentsButton.style.width = '100%';
+  attachmentsButton.style.border = 'none';
+  attachmentsButton.style.textAlign = 'left';
+  attachmentsButton.style.outline = 'none';
+  attachmentsButton.style.fontSize = '20px';
+
+  const attachmentsDiv = document.createElement('div');
+  attachmentsDiv.id = 'attachmentsDiv';
+  attachmentsDiv.style.display = 'none';
+
+
   // Append the titleDiv to the sidebarDiv
   sidebarDiv.appendChild(titleDiv);
 
@@ -208,6 +230,8 @@ function injectSidebarElements() {
   analysisDiv.appendChild(matchedDiv);
   analysisDiv.appendChild(hyperlinkButton);
   analysisDiv.appendChild(hyperlinkDiv);
+  analysisDiv.appendChild(attachmentsButton);
+  analysisDiv.appendChild(attachmentsDiv);
 
   // Append the tab to the document body
   document.body.appendChild(tab);
@@ -241,8 +265,8 @@ function injectSidebarElements() {
     filteredTokens.forEach(token => {
       const lowercaseToken = token.toLowerCase();
       receivedKWs.forEach(keyword => {
-        const lowercaseKeyword = keyword.keyword.toLowerCase();
-        if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword.toLowerCase() === lowercaseKeyword)) {
+        const lowercaseKeyword = keyword.keyword;
+        if (lowercaseKeyword === lowercaseToken && !matchedKeywords.some(item => item.keyword === lowercaseKeyword)) {
           matchedKeywords.push({ keyword: keyword.keyword, riskScore: keyword.riskScore, description: keyword.description });
         }
       });
@@ -347,6 +371,7 @@ function injectSidebarElements() {
   }
 
   function loadAnalysis() {
+    console.time('UID Disp Loading Time');
     console.log("Scanning email");
 
     needFlush = true;
@@ -355,25 +380,37 @@ function injectSidebarElements() {
     var numTokens = 0;
 
     // Grab the email body, subject, and sender
-    const emailBody    = document.querySelectorAll('.a3s.aiL');
+    const emailBody    = document.querySelector('.a3s.aiL:last-of-type > :not(.HOEnZb.adl)');
     const emailSubject = document.querySelector('h2.hP');
     const emailSender  = document.querySelector('span.go');
     var emailContent = null;
-    var lastEmailBody;
-    const lastEmail = emailBody[emailBody.length - 1];
-
-    lastEmailBody = lastEmail.querySelector('.a3s.aiL > :not(.HOEnZb.adl)');
-
-    // Create a MutationObserver to watch for changes to the email body
-    //const observer = new MutationObserver(() => {
-    // Select the email body element
-    // const emailBody = document.querySelector('.a3s.aiL');
 
       // Check if the email body is present and contains text
-      if (lastEmailBody && emailSubject) {
+      if (emailBody && emailSubject) {
         // Concat each of the email segments
-        emailContent = lastEmailBody + " " + emailSubject.textContent;
-        
+        emailContent = emailBody.textContent + " " + emailSubject.textContent;
+
+        console.log("if emailbody reached");
+
+        //find attachments
+        // Select all elements with the class "aZo"
+        var attachments = document.querySelectorAll('.aZo');
+
+        // Get the count of attachments
+        attachmentNames = [];
+        attachments.forEach(function(attachment) {
+          // Find the attachment name element within the attachment
+          var attachmentNameElement = attachment.querySelector('.a3I');
+
+          // Check if the attachment name element exists
+          if (attachmentNameElement) {
+            // Extract the text content of the attachment name element
+            var attachmentName = attachmentNameElement.textContent;
+            var cleanedAttachmentName = attachmentName.replace('Preview attachment', '').trim();
+            attachmentNames.push(cleanedAttachmentName);
+          }
+        })
+
         //parse for hyperlinks
         hyperlinks = [];
         const parser = new DOMParser();
@@ -394,22 +431,6 @@ function injectSidebarElements() {
         numTokens = tokens.length;
       }
     }
-    //});
-
-    // Configure the observer to watch for changes to the email body subtree
-    // observer.observe(document.body, {
-    //   subtree: true,
-    //   childList: true,
-    // });
-
-    // if (matchedKeywords) {
-    //   matchedKeywords = [];
-    //   let matchedKeywordsText = '';
-    //   matchedKeywords.forEach(({ keyword, riskScore, description }) => {
-    //     matchedKeywordsText += `${keyword} : ${riskScore} : ${description}<br><br>`;
-    //   });
-    //   matchedDiv.textContent = " " + matchedKeywordsText;
-    // }
 
     let spellingErrors = [];
     let grammarErrors = [];
@@ -448,7 +469,7 @@ function injectSidebarElements() {
           const currMatches = data.matches; // Extracting the matches array
           console.log("Matches:", currMatches);
           currMatches.forEach(error => {
-            if(error.message == "If a new sentence starts here, add a space and start with an uppercase letter.") {
+            if(error.message == "If a new sentence starts here, add a space and start with an uppercase letter." || error.context.text.includes("[object HTMLDivElement]")) {
               //do nothing
             }
             else if (error.shortMessage == "Spelling mistake") {
@@ -464,6 +485,15 @@ function injectSidebarElements() {
 
     Promise.all(apiPromises)
       .then(() => {
+        //extract attachment info
+        attachmentsButton.innerHTML = "<b>Attachments Found: " + attachmentNames.length + "</b>";
+        attachmentsString = "<br>Sometimes emails will include attachments that are designed to harm your computer. Attachmenets don't factor into your phishing score, but you should always think before you click. Never open attachments from unknown sources, and be catious of attachments with extensions like .exe<br><br>";
+        attachmentsString += "<div style='word-wrap: break-word;'>";
+        attachmentNames.forEach(attachment => {
+          attachmentsString += "Attachment: " + attachment + "<br><br>";
+        })
+        attachmentsString += "</div>";
+
         //extract hyperlink info
         hyperlinkButton.innerHTML = "<b>Hyperlinks Found: " + hyperlinks.length + "</b>";
         hyperlinkString = "<br>Sometimes emails will include malicious links that are designed to harm your computer or steal your data. Hyperlinks don't factor into your phishing score, but you should always be aware and cautious when they're present. <br><br>";
@@ -489,10 +519,7 @@ function injectSidebarElements() {
           grammarString += "Error: " + error.message + "<br>";
           grammarString += "Context: " + error.context.text + "<br><br>";
         })
-
-        //keywords I guess
         var totalRiskScore = 0;
-        // if (matchedKeywords) {
         let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
         console.log(matchedKeywords);
         let matchedKeywordsText = '';
@@ -503,7 +530,6 @@ function injectSidebarElements() {
         keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
         matchedDiv.innerHTML = keyWordLog;
         matchedButton.innerHTML = "<b>Keywords found: " + matchedKeywords.length + "</b>";
-        // }
         if (numTokens > 0) {
           // Spelling errors
           const spellingScore = Math.min(((spellingCount / numTokens) * 500), 100);
@@ -513,6 +539,10 @@ function injectSidebarElements() {
           const keywordScore = Math.min(((totalRiskScore / numTokens) * 100), 100);
           // Confidence score algorithm
           const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
+          // If the email is "High risk" this sends a message to the background script to timestamp the occurence
+          if(confidenceScore >= 75) {
+            chrome.runtime.sendMessage({eventName: "High-Risk"});
+          }
           // console.log(spellingCount);
           // console.log(numTokens);
           // console.log(spellingScore);
@@ -529,6 +559,22 @@ function injectSidebarElements() {
           } else {
             scoreBodyDiv.style.backgroundColor = '#ff0000';
           }
+          const message = {
+            type: 'analysisData',
+            keywords: keyWordLog,
+            spelling: spellingString,
+            grammar: grammarString,
+            hyperlinks: hyperlinkString,
+            score: confidenceScore.toFixed(2),
+            numKeywords: matchedKeywords.length,
+            numSpelling: spellingErrors.length,
+            numGrammar: grammarErrors.length,
+            numHyperlinks: hyperlinks.length,
+            attachments: attachmentsString,
+            numAttachments: attachmentNames.length
+          };
+          console.log("reached");
+          chrome.runtime.sendMessage(message);
         }
       })
       .catch(error => {
@@ -569,20 +615,15 @@ function injectSidebarElements() {
         hyperlinkDiv.innerHTML = hyperlinkString;
       }
     });
-
-    // #TODO handle comparisons with keywords
-    // const tempKeywordScore = 0;
-    // if (matchedKeywords) {
-    //   let keyWordLog = "<br><b>Matched Words</b><br> Often times there are specific things and feelings a scammer will want from you. The words they choose will indicate what they want and are indicative of an attempt at phishing. The higher the score the higher the chance the word is indicative of phishing. <br><br>";
-    //   console.log(matchedKeywords);
-    //   let matchedKeywordsText = '';
-    //   matchedKeywords.forEach(({ keyword, riskScore }) => {
-    //     matchedKeywordsText += `${keyword} : ${riskScore}<br>`;
-    //   });
-    //   keyWordLog = keyWordLog + " " + matchedKeywordsText + "<br><br>";
-    //   matchedDiv.innerHTML = keyWordLog;
-    //   matchedButton.innerHTML =  "<b>Keywords found: " + matchedKeywords.length + "</b>";
-    // }
+    attachmentsButton.addEventListener("click", function () {
+      if (attachmentsDiv.style.display === 'block') {
+        attachmentsDiv.style.display = 'none';
+      } else {
+        attachmentsDiv.style.display = 'block';
+        attachmentsDiv.innerHTML = attachmentsString;
+      }
+    });
+    
     // if (numTokens > 0) {
     //   console.log("bleh")
     //   // Spelling errors
@@ -609,6 +650,7 @@ function injectSidebarElements() {
     //     scoreBodyDiv.style.backgroundColor = '#ff0000';
     //   }
     // }
+    console.timeEnd('UID Disp Loading Time');
   }
 }
 
