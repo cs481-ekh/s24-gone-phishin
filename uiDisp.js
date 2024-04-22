@@ -304,11 +304,9 @@ function injectSidebarElements() {
 
         // Move sidebar if neccessary
         if (gmailBar.clientWidth != 0) {
-          console.log('Moving left from ' + tabPos + 'px')
           sidebarDiv.style.right = (barPos + barWidth) + 'px';
           tab.style.right = (tabPos + barWidth) + 'px';
         } else {
-          console.log('Moving right from ' + tabPos + 'px')
           sidebarDiv.style.right = (barPos - barWidth) + 'px';
           tab.style.right = (tabPos - barWidth) + 'px';
         }
