@@ -86,7 +86,7 @@ function injectSidebarElements() {
   tab.style.right = '0';
   tab.style.top = '50%';
   tab.style.transform = 'translateY(-50%)';
-  tab.style.zIndex = '0';
+  tab.style.zIndex = '3';
 
   // Create a sidebar within the Gmail interface
   const sidebarDiv = document.createElement('div');
@@ -281,10 +281,8 @@ function injectSidebarElements() {
 
     // Grab the gmail button
     var gmailTab = null
-    var count = 0;
-    while (!gmailTab && count <= 5) {
+    while (!gmailTab) {
       gmailTab = document.querySelector('[class*="aT5-aOt-I brC-dA-I"]');
-      count++;
     }
     
     if (gmailTab) {
