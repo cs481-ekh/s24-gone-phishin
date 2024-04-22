@@ -546,7 +546,7 @@ function injectSidebarElements() {
           // console.log(spellingScore);
           // console.log(totalRiskScore);
           //console.log(grammarScore);
-          var scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
+          var scoreString = ("Confidence Score: " + confidenceScore.toFixed(1) + '%');
           scoreBodyDiv.textContent = scoreString;
           if (confidenceScore <= 25) {
             scoreBodyDiv.style.backgroundColor = '#00ff00';
