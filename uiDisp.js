@@ -118,6 +118,15 @@ function injectSidebarElements() {
   rescanButton.style.marginBottom = '5px';
   rescanButton.style.cursor = "pointer";
 
+  const reportButton = document.createElement('button');
+  reportButton.textContent = "I've been scammed";
+  reportButton.style.marginLeft = '5px';
+  reportButton.style.marginBottom = '5px';
+  reportButton.style.cursor = "pointer";
+  reportButton.addEventListener('click', function () {
+    window.open('https://www.ic3.gov/');
+  });
+
   const spellingButton = document.createElement('button');
   spellingButton.class = "collapsible";
   spellingButton.style.backgroundColor = "#ccc";
@@ -216,6 +225,7 @@ function injectSidebarElements() {
 
   //TEST CODE
   analysisDiv.appendChild(rescanButton);
+  analysisDiv.appendChild(reportButton);
   analysisDiv.appendChild(spellingButton);
   analysisDiv.appendChild(spellingDiv);
   analysisDiv.appendChild(grammarButton);
