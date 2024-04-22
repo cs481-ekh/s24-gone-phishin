@@ -65,6 +65,12 @@ function splitTextIntoChunks(text, wordsPerChunk) {
   return chunks;
 }
 
+function percentToPixel(percentage) {
+  const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+  const pixelWidth = (viewportWidth * percentage) / 100;
+  return pixelWidth;
+}
+
 // Function to inject sidebar elements
 function injectSidebarElements() {
   // Create the tab button
@@ -83,7 +89,7 @@ function injectSidebarElements() {
   sidebarDiv.style.position = 'fixed';
   sidebarDiv.style.top = '10%';
   sidebarDiv.style.right = '-300px';
-  sidebarDiv.style.width = '15%';
+  sidebarDiv.style.width = percentToPixel(15) + 'px';
   sidebarDiv.style.height = '70%';
   sidebarDiv.style.backgroundColor = 'white';
   sidebarDiv.style.border = '1px solid black';
@@ -253,18 +259,34 @@ function injectSidebarElements() {
     const gmailTab = document.querySelector('[class*="aT5-aOt-I brC-dA-I"]');
     
     if (gmailTab) {
+      // Grab gmail bar
+      const gmailBar = document.querySelector('.brC-aT5-aOt-Jw');
+      const barWidth = 56;
+
+      // Grab our bar's location
+      var barPos = parseInt(sidebarDiv.style.right);
+      var tabPos = parseInt(tab.style.right);
+
+      // Initial placement
+      if (gmailBar.clientWidth != 0) {
+        sidebarDiv.style.right = (barPos + barWidth) + 'px';
+        tab.style.right = (tabPos + barWidth) + 'px';
+      }
+
       gmailTab.addEventListener('click', function(event) {
-        // Grab gmail bar
-        const gmailBar = document.querySelector('.brC-aT5-aOt-Jw');
-        const barWidth = gmailBar.clientWidth;
-        console.log("BAR WIDTH: " + barWidth);
+        // Update barPos and tabPos
+        barPos = parseInt(sidebarDiv.style.right);
+        tabPos = parseInt(tab.style.right);
+
         // Move sidebar if neccessary
-        if (barWidth != 0) {
-          const barPos = parseInt(sidebarDiv.style.right) + barWidth;
-          const tabPos = parseInt(tab.style.right) + barWidth;
-          //console.log(tabPos + 'px')
-          sidebarDiv.style.right = barPos + 'px';
-          tab.style.right = tabPos + 'px';
+        if (gmailBar.clientWidth != 0) {
+          console.log('Moving left from ' + tabPos + 'px')
+          sidebarDiv.style.right = (barPos + barWidth) + 'px';
+          tab.style.right = (tabPos + barWidth) + 'px';
+        } else {
+          console.log('Moving right from ' + tabPos + 'px')
+          sidebarDiv.style.right = (barPos - barWidth) + 'px';
+          tab.style.right = (tabPos - barWidth) + 'px';
         }
 
       });
@@ -275,11 +297,14 @@ function injectSidebarElements() {
 
   // Add event listener to the tab
   tab.addEventListener('click', () => {
-    // Toggle the visibility of the sidebar
-    sidebarDiv.style.right = sidebarDiv.style.right === '0px' ? '-300px' : '0px';
+    // Get the current position of the sidebar
+    const barPosition = parseInt(sidebarDiv.style.right);
+
+    // Adjust the position based on its current value
+    sidebarDiv.style.right = barPosition < 0 ? (barPosition + 300) + 'px' : (barPosition - 300) + 'px';
 
     // Check if the sidebar is visible
-    const isVisible = sidebarDiv.style.right === '0px';
+    const isVisible = barPosition < 0;
 
     // Calculate the new width for the gmail interface
     const newWidth = isVisible ? `calc(95% - ${sidebarDiv.style.width})` : '100%';
@@ -287,8 +312,9 @@ function injectSidebarElements() {
     // Move the gmail interface
     document.querySelector('.bkK>.nH').style.width = newWidth;
 
+    const tabPosition = parseInt(tab.style.right);
     // Move the tab button
-    tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
+    tab.style.right = isVisible ? `${tabPosition + parseInt(sidebarDiv.style.width)}px` : `${tabPosition - parseInt(sidebarDiv.style.width)}px`;
   });
 
   rescanButton.addEventListener('click', loadAnalysis);
