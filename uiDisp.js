@@ -465,15 +465,7 @@ function injectSidebarElements() {
           const keywordScore = Math.min(((totalRiskScore / numTokens) * 100), 100);
           // Confidence score algorithm
           const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
-          // If the email is "High risk" this sends a message to the background script to timestamp the occurence
-          if(confidenceScore >= 75) {
-            chrome.runtime.sendMessage({eventName: "High-Risk"});
-          }
-          // console.log(spellingCount);
-          // console.log(numTokens);
-          // console.log(spellingScore);
-          // console.log(totalRiskScore);
-          //console.log(grammarScore);
+
           var scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
           scoreBodyDiv.textContent = scoreString;
           if (confidenceScore <= 25) {
@@ -485,6 +477,13 @@ function injectSidebarElements() {
           } else {
             scoreBodyDiv.style.backgroundColor = '#ff0000';
           }
+
+          // If the email is "High risk" this sends a message to the background script to timestamp the occurence
+          if(confidenceScore >= 25) {
+            alert('WARNING: Hook, Line, and Secure has recognized this email as high risk');
+            chrome.runtime.sendMessage({eventName: "High-Risk"});
+          }
+                    
           const message = {
             type: 'analysisData',
             keywords: keyWordLog,
