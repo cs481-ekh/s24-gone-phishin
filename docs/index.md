@@ -22,7 +22,7 @@ Hook, Line, and Secure is a browser extension for Gmail account users on the lat
 ![Help Page](help-page.JPG)
 
 ### Detailed Report
-![Detailed Report](report-page.JPG)
+![Detailed Report](report-page-2.JPG)
 
 ## Members:
  - Kyle Doster
