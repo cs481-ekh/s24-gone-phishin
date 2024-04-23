@@ -131,7 +131,7 @@ function injectSidebarElements() {
   detailButton.style.marginBottom = '5px';
   detailButton.style.cursor = "pointer";
   detailButton.addEventListener('click', function() {
-    chrome.runtime.sendMessage({action: 'openAddRes'});
+    chrome.runtime.sendMessage({action: 'openDetails'});
   });
 
   const reportButton = document.createElement('button');
