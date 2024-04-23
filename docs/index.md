@@ -9,7 +9,17 @@ Ransomware and other malware is increasingly becoming a problem for individuals 
 ## Project Description:
 Hook, Line, and Secure is a Browser extension for Gmail account users on the latest version of Google Chrome. It is capable of analyzing emails for signs of phishing such as spelling and grammar errors, keywords, and the presence of hyperlinks and attatchments. The email is then given a confidence score from 0-100% indicating the liklihood of phishing based on these components, the higher the percentage the more the user is at risk. Each element is given a breakdown that further explains the exact areas of the email that are indicative of phishing. Hook, Line, and Secure also provides links to additional educational resources for our users to learn more about spear phishing and better avoid it.
 
-### TODO: add images
+![Settings Menu](settings-menu.JPG)
+*Settings Menu*
+
+![Sidebar](Sidebar.JPG)
+*Extension Sidebar*
+
+![About Page](about-page.JPG)
+*About Page*
+
+![Help Page](help-page.JPG)
+*Help Page*
 
 ## Members:
  - Kyle Doster
