@@ -93,7 +93,7 @@ function injectSidebarElements() {
   sidebarDiv.id = 'sidebarDiv';
   sidebarDiv.style.position = 'fixed';
   sidebarDiv.style.top = '10%';
-  sidebarDiv.style.right = '-300px';
+  sidebarDiv.style.right = '-600px';
   sidebarDiv.style.width = percentToPixel(15) + 'px';
   sidebarDiv.style.height = '70%';
   sidebarDiv.style.backgroundColor = 'white';
@@ -326,7 +326,7 @@ function injectSidebarElements() {
     const barPosition = parseInt(sidebarDiv.style.right);
 
     // Adjust the position based on its current value
-    sidebarDiv.style.right = barPosition < 0 ? (barPosition + 300) + 'px' : (barPosition - 300) + 'px';
+    sidebarDiv.style.right = barPosition < 0 ? (barPosition + 600) + 'px' : (barPosition - 600) + 'px';
 
     // Check if the sidebar is visible
     const isVisible = barPosition < 0;
