@@ -56,6 +56,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === 'openAddRes') {
-    chrome.tabs.create({ url: '../pages/detailedReport.html' });
+    chrome.tabs.create({ url: '../pages/additionalResources.html' });
   }
+
 });

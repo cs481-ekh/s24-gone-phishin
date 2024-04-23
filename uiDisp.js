@@ -114,6 +114,12 @@ function injectSidebarElements() {
   analysisDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
   analysisDiv.style.backgroundColor = '#ccc';
 
+  const addResourceButton = document.createElement('button');
+  addResourceButton.textContent = "Additional Resources";
+  addResourceButton.style.marginBottom = '12px';
+  addResourceButton.style.borderRadius = '5px';
+  addResourceButton.style.cursor = "pointer";
+
   const rescanButton = document.createElement('button');
   rescanButton.textContent = "Rescan email";
   rescanButton.style.marginBottom = '5px';
@@ -200,6 +206,7 @@ function injectSidebarElements() {
   sidebarDiv.appendChild(analysisDiv);
 
   //TEST CODE
+  analysisDiv.appendChild(addResourceButton);
   analysisDiv.appendChild(rescanButton);
   analysisDiv.appendChild(detailButton);
   analysisDiv.appendChild(reportButton);
@@ -269,6 +276,10 @@ function injectSidebarElements() {
     tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
   });
   rescanButton.addEventListener('click', loadAnalysis);
+
+  addResourceButton.addEventListener('click', function() {
+    chrome.runtime.sendMessage({action: 'openAddRes'});
+  });
 
   let needFlush = false;
   // Scan email upon opening
