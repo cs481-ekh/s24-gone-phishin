@@ -70,6 +70,12 @@ function splitTextIntoChunks(text, wordsPerChunk) {
   return chunks;
 }
 
+function percentToPixel(percentage) {
+  const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+  const pixelWidth = (viewportWidth * percentage) / 100;
+  return pixelWidth;
+}
+
 // Function to inject sidebar elements
 function injectSidebarElements() {
   // Create the tab button
@@ -80,15 +86,15 @@ function injectSidebarElements() {
   tab.style.right = '0';
   tab.style.top = '50%';
   tab.style.transform = 'translateY(-50%)';
-  tab.style.zIndex = '1000000000000000';
+  tab.style.zIndex = '3';
 
   // Create a sidebar within the Gmail interface
   const sidebarDiv = document.createElement('div');
   sidebarDiv.id = 'sidebarDiv';
   sidebarDiv.style.position = 'fixed';
   sidebarDiv.style.top = '10%';
-  sidebarDiv.style.right = '-300px';
-  sidebarDiv.style.width = '15%';
+  sidebarDiv.style.right = '-600px';
+  sidebarDiv.style.width = percentToPixel(15) + 'px';
   sidebarDiv.style.height = '70%';
   sidebarDiv.style.backgroundColor = 'white';
   sidebarDiv.style.border = '5px solid #88001b';
@@ -114,6 +120,12 @@ function injectSidebarElements() {
   analysisDiv.style.boxSizing = 'border-box'; // Include padding in width calculation
   analysisDiv.style.backgroundColor = '#ccc';
 
+  const addResourceButton = document.createElement('button');
+  addResourceButton.textContent = "Additional Resources";
+  addResourceButton.style.marginBottom = '12px';
+  addResourceButton.style.borderRadius = '5px';
+  addResourceButton.style.cursor = "pointer";
+
   const rescanButton = document.createElement('button');
   rescanButton.textContent = "Rescan email";
   rescanButton.style.marginBottom = '5px';
@@ -125,7 +137,7 @@ function injectSidebarElements() {
   detailButton.style.marginBottom = '5px';
   detailButton.style.cursor = "pointer";
   detailButton.addEventListener('click', function() {
-    chrome.runtime.sendMessage({action: 'openAddRes'});
+    chrome.runtime.sendMessage({action: 'openDetails'});
   });
 
   const reportButton = document.createElement('button');
@@ -200,6 +212,7 @@ function injectSidebarElements() {
   sidebarDiv.appendChild(analysisDiv);
 
   //TEST CODE
+  analysisDiv.appendChild(addResourceButton);
   analysisDiv.appendChild(rescanButton);
   analysisDiv.appendChild(detailButton);
   analysisDiv.appendChild(reportButton);
@@ -251,13 +264,61 @@ function injectSidebarElements() {
     return filteredTokens;
   }
 
+  // Once the webpage has fully loaded, execute this code
+  window.addEventListener('load', function() {
+    console.log("Webpage fully loaded!");
+
+    // Grab the gmail button
+    var gmailTab = null
+    while (!gmailTab) {
+      gmailTab = document.querySelector('[class*="aT5-aOt-I brC-dA-I"]');
+    }
+    
+    if (gmailTab) {
+      // Grab gmail bar
+      const gmailBar = document.querySelector('.brC-aT5-aOt-Jw');
+      const barWidth = 56;
+
+      // Grab our bar's location
+      var barPos = parseInt(sidebarDiv.style.right);
+      var tabPos = parseInt(tab.style.right);
+
+      // Initial placement
+      if (gmailBar.clientWidth != 0) {
+        sidebarDiv.style.right = (barPos + barWidth) + 'px';
+        tab.style.right = (tabPos + barWidth) + 'px';
+      }
+
+      gmailTab.addEventListener('click', function(event) {
+        // Update barPos and tabPos
+        barPos = parseInt(sidebarDiv.style.right);
+        tabPos = parseInt(tab.style.right);
+
+        // Move sidebar if neccessary
+        if (gmailBar.clientWidth != 0) {
+          sidebarDiv.style.right = (barPos + barWidth) + 'px';
+          tab.style.right = (tabPos + barWidth) + 'px';
+        } else {
+          sidebarDiv.style.right = (barPos - barWidth) + 'px';
+          tab.style.right = (tabPos - barWidth) + 'px';
+        }
+
+      });
+    } else {
+      console.error('gmail tab not found');
+    }
+  });
+
   // Add event listener to the tab
   tab.addEventListener('click', () => {
-    // Toggle the visibility of the sidebar
-    sidebarDiv.style.right = sidebarDiv.style.right === '0px' ? '-300px' : '0px';
+    // Get the current position of the sidebar
+    const barPosition = parseInt(sidebarDiv.style.right);
+
+    // Adjust the position based on its current value
+    sidebarDiv.style.right = barPosition < 0 ? (barPosition + 600) + 'px' : (barPosition - 600) + 'px';
 
     // Check if the sidebar is visible
-    const isVisible = sidebarDiv.style.right === '0px';
+    const isVisible = barPosition < 0;
 
     // Calculate the new width for the gmail interface
     const newWidth = isVisible ? `calc(95% - ${sidebarDiv.style.width})` : '100%';
@@ -265,10 +326,16 @@ function injectSidebarElements() {
     // Move the gmail interface
     document.querySelector('.bkK>.nH').style.width = newWidth;
 
+    const tabPosition = parseInt(tab.style.right);
     // Move the tab button
-    tab.style.right = isVisible ? sidebarDiv.style.width : '0px';
+    tab.style.right = isVisible ? `${tabPosition + parseInt(sidebarDiv.style.width)}px` : `${tabPosition - parseInt(sidebarDiv.style.width)}px`;
   });
+
   rescanButton.addEventListener('click', loadAnalysis);
+
+  addResourceButton.addEventListener('click', function() {
+    chrome.runtime.sendMessage({action: 'openAddRes'});
+  });
 
   let needFlush = false;
   // Scan email upon opening
@@ -466,7 +533,8 @@ function injectSidebarElements() {
           // Confidence score algorithm
           const confidenceScore = (0.5 * keywordScore) + (0.25 * spellingScore) + (0.25 * grammarScore);
 
-          var scoreString = ("Confidence Score: " + confidenceScore.toFixed(2) + '%');
+          var scoreString = ("Confidence Score: " + confidenceScore.toFixed(1) + '%');
+
           scoreBodyDiv.textContent = scoreString;
           if (confidenceScore <= 25) {
             scoreBodyDiv.style.backgroundColor = '#00ff00';
@@ -490,7 +558,7 @@ function injectSidebarElements() {
             spelling: spellingString,
             grammar: grammarString,
             hyperlinks: hyperlinkString,
-            score: confidenceScore.toFixed(2),
+            score: confidenceScore.toFixed(1),
             numKeywords: matchedKeywords.length,
             numSpelling: spellingErrors.length,
             numGrammar: grammarErrors.length,
